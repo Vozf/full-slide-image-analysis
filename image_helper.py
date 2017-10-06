@@ -31,8 +31,8 @@ class ImageHelper:
                                     self.image_dimensions[1] / self.scale_factor)
 
     def get_QImage(self):
-        region_initial_coordinates = (self.current_coordinates[0] * self.current_level, self.current_coordinates[1] * self.current_level)
-        self.image = self.openslideImage.read_region(region_initial_coordinates, self.current_level,
+
+        self.image = self.openslideImage.read_region(self.current_coordinates, self.current_level,
                                                      self.current_window_size)
         print self.current_coordinates, self.current_level, self.current_window_size
         return ImageQt.ImageQt(self.image)
@@ -60,8 +60,7 @@ class ImageHelper:
         return self.change_image_properties(self.current_coordinates, self.current_level, self.current_window_size)
 
 
-    # FIXME Movement doesn't work properly,
-    # TODO try using something from openslide library http://openslide.org/api/python/#module-openslide
+    # TODO look at openslide library http://openslide.org/api/python/#module-openslide
     def move_right(self):
         if (self.current_coordinates[0] + 2 * self.current_movement_step[0]) <= self.image_dimensions[0]:
             self.current_coordinates = (self.current_coordinates[0] + self.current_movement_step[0], self.current_coordinates[1])
