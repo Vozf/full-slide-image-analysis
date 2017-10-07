@@ -9,7 +9,6 @@ from PySide.QtCore import *
 from image_helper import ImageHelper
 
 
-# TODO Remove the unnecessary methods and fields
 class ImageViewer(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(ImageViewer, self).__init__()
