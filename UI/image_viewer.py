@@ -7,6 +7,7 @@ from ui_mainWindow import Ui_MainWindow
 from PySide.QtGui import *
 from PySide.QtCore import *
 from image_helper import ImageHelper
+import sys
 
 
 # TODO Remove the unnecessary methods and fields
@@ -237,15 +238,13 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
 
     @staticmethod
+    def run():
+        app = QApplication(sys.argv)
+        image_viewer = ImageViewer()
+        image_viewer.show()
+        return app.exec_()
+
+    @staticmethod
     def adjust_scroll_bar(scroll_bar, factor):
         scroll_bar.setValue(int(factor * scroll_bar.value()
                                 + ((factor - 1) * scroll_bar.pageStep() / 2)))
-
-
-if __name__ == '__main__':
-    import sys
-
-    app = QApplication(sys.argv)
-    imageViewer = ImageViewer()
-    imageViewer.show()
-    sys.exit(app.exec_())
