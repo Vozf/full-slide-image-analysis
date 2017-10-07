@@ -1,6 +1,7 @@
 import sys
 from PySide import QtGui
 import openslide
+from constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 sys.modules['PyQt5.QtGui'] = QtGui
 from PIL import ImageQt
@@ -13,7 +14,7 @@ class ImageHelper:
         self.level_dimensions = self.openslide_image.level_dimensions
         self.current_coordinates = (0, 0)
         self.image_dimensions = self.level_dimensions[0]
-        self.scale_factor = 1
+        self.scale_factor = BASE_SCALE_FACTOR
         self.current_movement_step = (self.image_dimensions[0] / self.scale_factor,
                                       self.image_dimensions[1] / self.scale_factor)
         self.current_window_size = self.level_dimensions[self.current_level]
@@ -46,7 +47,7 @@ class ImageHelper:
     def zoom_in(self):
         if self.current_level != 0:
             self.current_level = self.current_level - 1
-            self.scale_factor *= 2
+            self.scale_factor *= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
         return self.change_image_properties(self.current_coordinates, self.current_level,
                                             self.current_window_size)
@@ -54,14 +55,14 @@ class ImageHelper:
     def zoom_out(self):
         if self.current_level < self.openslide_image.level_count - 1:
             self.current_level = self.current_level + 1
-            self.scale_factor /= 2
+            self.scale_factor /= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
         return self.change_image_properties(self.current_coordinates, self.current_level,
                                             self.current_window_size)
 
     # TODO look at openslide library http://openslide.org/api/python/#module-openslide
     def move_right(self):
-        if (self.current_coordinates[0] + 2 * self.current_movement_step[0]) <= \
+        if (self.current_coordinates[0] + SCALE_MULTIPLIER * self.current_movement_step[0]) <= \
                 self.image_dimensions[0]:
             self.current_coordinates = (self.current_coordinates[0] + self.current_movement_step[0],
                                         self.current_coordinates[1])
@@ -76,7 +77,7 @@ class ImageHelper:
             print self.current_coordinates
 
     def move_down(self):
-        if (self.current_coordinates[1] + 2 * self.current_movement_step[1]) <= \
+        if (self.current_coordinates[1] + SCALE_MULTIPLIER * self.current_movement_step[1]) <= \
                 self.image_dimensions[1]:
             self.current_coordinates = (
                 self.current_coordinates[0],
