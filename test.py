@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QDir, Qt
-from PyQt5.QtGui import QPainter, QPalette, QPixmap
+from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
 
