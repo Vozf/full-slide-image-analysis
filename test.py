@@ -61,7 +61,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
             #             "Cannot load %s." % fileName)
             #     return
 
-            self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_QImage()))
+            self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
             self.scale_factor = 1.0
 
             self.fit_to_window_act.setEnabled(True)
@@ -81,22 +81,22 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     def move_right(self):
         self.image_helper.move_right()
         print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_QImage()))
+        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def move_left(self):
         self.image_helper.move_left()
         print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_QImage()))
+        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def move_up(self):
         self.image_helper.move_up()
         print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_QImage()))
+        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def move_down(self):
         self.image_helper.move_down()
         print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_QImage()))
+        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def normal_size(self):
         self.imageLabel.adjustSize()
