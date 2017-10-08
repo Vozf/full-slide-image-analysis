@@ -1,12 +1,11 @@
-from PyQt5.QtCore import QDir, Qt
+from PyQt5.QtCore import QDir
 from PyQt5.QtGui import QPalette, QPixmap
-from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
-                             QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
-
-from ui_mainWindow import Ui_MainWindow
-from PySide.QtGui import *
+from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QMenu, QMessageBox, QSizePolicy)
 from PySide.QtCore import *
-from image_helper import ImageHelper
+from PySide.QtGui import *
+
+from UI.image_helper import ImageHelper
+from UI.ui_mainWindow import Ui_MainWindow
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
@@ -41,9 +40,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
             self.image_helper = ImageHelper(file_name)
 
-            # print openslideImage.dimensions
-            # print openslideImage.level_dimensions
-            # print openslideImage.level_count
+            # print(openslideImage.dimensions)
+            # print(openslideImage.level_dimensions)
+            # print(openslideImage.level_count)
             # self.image = openslideImage.get_thumbnail((self.imageLabel.width(), self.imageLabel.height()))
             #
             # self.image = openslideImage.read_region((0, 0), openslideImage.level_count - 1,
@@ -79,22 +78,22 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
     def move_right(self):
         self.image_helper.move_right()
-        print self.imageLabel.size()
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def move_left(self):
         self.image_helper.move_left()
-        print self.imageLabel.size()
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def move_up(self):
         self.image_helper.move_up()
-        print self.imageLabel.size()
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def move_down(self):
         self.image_helper.move_down()
-        print self.imageLabel.size()
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
 
     def normal_size(self):
