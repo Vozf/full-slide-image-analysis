@@ -9,8 +9,8 @@ setuptools.setup(name='full_slide_image_analysis',
                  version=full_slide_image_analysis.__version__,
                  url='https://github.com/Vozf/full-slide-image-analysis/',
                  license='???',  # todo: add
-                 description='???',  # todo: add,
+                 description='???',  # todo: add
                  packages=setuptools.find_packages(exclude=['doc']),
-                 scripts=['full_slide_image_analysis/scripts/full_slide_image_analysis'],  # todo: rename
+                 scripts=['full_slide_image_analysis/full_slide_image_analysis'],  # todo: rename
                  install_requires=INSTALL_REQUIRES,
                  )

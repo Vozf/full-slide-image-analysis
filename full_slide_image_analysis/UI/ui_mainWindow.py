@@ -9,6 +9,7 @@
 
 from PySide import QtCore, QtGui
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -53,6 +54,8 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.imageLabel.setText(QtGui.QApplication.translate("MainWindow", "Image will be displayed here", None, QtGui.QApplication.UnicodeUTF8))
-
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None,
+                                                               QtGui.QApplication.UnicodeUTF8))
+        self.imageLabel.setText(
+            QtGui.QApplication.translate("MainWindow", "Image will be displayed here", None,
+                                         QtGui.QApplication.UnicodeUTF8))
