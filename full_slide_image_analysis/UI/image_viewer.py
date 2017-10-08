@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QMenu, QMessage
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-from UI.image_helper import ImageHelper
-from UI.ui_mainWindow import Ui_MainWindow
+from full_slide_image_analysis.UI.image_helper import ImageHelper
+from full_slide_image_analysis.UI.ui_mainWindow import Ui_MainWindow
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
@@ -122,7 +122,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
                           "(QScrollArea.widgetResizable), can be used to implement "
                           "zooming and scaling features.</p>"
                           "<p>In addition the example shows how to use QPainter to "
-                          "print an image.</p>")
+                          "print(an) image.</p>")
 
     # noinspection PyAttributeOutsideInit
     def create_actions(self):
