@@ -17,7 +17,7 @@ Then, install full-slide-image-analysis with:
 $ sudo python setup.py install
 ```
 
-or if you want to install it for current user:
+or if you want to install it locally:
 
 ```
 $ python setup.py install --user
