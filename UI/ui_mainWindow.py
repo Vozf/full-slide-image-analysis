@@ -2,50 +2,44 @@
 
 # Form implementation generated from reading ui file 'main_layout.ui'
 #
-# Created: Wed Oct  4 21:28:58 2017
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
-        self.centralwidget = QtGui.QWidget(MainWindow)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-
-        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
+        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-
-        self.scrollArea = QtGui.QScrollArea(self.centralwidget)
+        self.scrollArea = QtWidgets.QScrollArea(self.centralwidget)
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
-
-        self.scrollAreaWidgetContents = QtGui.QWidget()
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 574, 536))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-
-        self.verticalLayout = QtGui.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-
-        self.imageLabel = QtGui.QLabel(self.scrollAreaWidgetContents)
+        self.imageLabel = QtWidgets.QLabel(self.scrollAreaWidgetContents)
         self.imageLabel.setObjectName("imageLabel")
-
         self.verticalLayout.addWidget(self.imageLabel)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 1, 1, 1)
-        self.listView = QtGui.QListView(self.centralwidget)
+        self.listView = QtWidgets.QListView(self.centralwidget)
         self.listView.setMaximumSize(QtCore.QSize(200, 16777215))
         self.listView.setObjectName("listView")
         self.gridLayout.addWidget(self.listView, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
@@ -53,6 +47,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.imageLabel.setText(QtGui.QApplication.translate("MainWindow", "Image will be displayed here", None, QtGui.QApplication.UnicodeUTF8))
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.imageLabel.setText(_translate("MainWindow", "Image will be displayed here"))
 
