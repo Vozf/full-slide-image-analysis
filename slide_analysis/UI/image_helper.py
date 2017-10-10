@@ -3,7 +3,7 @@ import sys
 import openslide
 from PIL import ImageQt
 from PySide import QtGui
-from full_slide_image_analysis.UI.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
+from slide_analysis.UI.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 sys.modules['PyQt5.QtGui'] = QtGui
 

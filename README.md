@@ -1,8 +1,8 @@
-# Full slide image analysis
+# Slide analysis
 
 ## Installation from binaries
 
-Look at the [releases page](https://github.com/Vozf/full-slide-image-analysis/releases).
+Look at the [releases page](https://github.com/Vozf/slide-analysis/releases).
 
 ## Installation from source
 
@@ -11,7 +11,7 @@ Look at the [releases page](https://github.com/Vozf/full-slide-image-analysis/re
 
 Install [requirements](requirements.txt). 
 
-Then, install full-slide-image-analysis with:
+Then, install slide-analysis with:
 
 ```
 $ sudo python setup.py install
@@ -25,5 +25,4 @@ $ python setup.py install --user
 
 ## Run
 
-Execute `full_slide_image_analysis` script.
-
+Execute `slide_analysis` script. 

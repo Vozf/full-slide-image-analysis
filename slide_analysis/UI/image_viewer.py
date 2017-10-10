@@ -4,8 +4,8 @@ from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QMenu, QMessage
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-from full_slide_image_analysis.UI.image_helper import ImageHelper
-from full_slide_image_analysis.UI.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.image_helper import ImageHelper
+from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
