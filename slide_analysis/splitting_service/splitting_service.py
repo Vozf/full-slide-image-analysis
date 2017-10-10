@@ -1,6 +1,7 @@
 import openslide
-import full_slide_image_analysis.splitting_service.constants as constants
-from full_slide_image_analysis.utils import Tile
+
+import slide_analysis.splitting_service.constants as constants
+from slide_analysis.utils import Tile
 
 
 class SplittingService:

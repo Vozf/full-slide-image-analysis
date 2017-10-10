@@ -1,1 +1,0 @@
-from full_slide_image_analysis.splitting_service.splitting_service import SplittingService
