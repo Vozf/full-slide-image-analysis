@@ -1,7 +1,7 @@
 import openslide
 from PIL import ImageQt
 
-from slide_analysis.UI import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
+from slide_analysis.UI.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 
 class ImageHelper:
