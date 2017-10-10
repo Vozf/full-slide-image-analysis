@@ -11,7 +11,6 @@ from UI.image_helper import ImageHelper
 from UI.ui_mainWindow import Ui_MainWindow
 
 
-
 class ImageViewer(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(ImageViewer, self).__init__()
