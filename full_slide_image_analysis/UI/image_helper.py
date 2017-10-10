@@ -1,11 +1,8 @@
-import sys
-
 import openslide
-from PIL import ImageQt
-from PySide import QtGui
-from full_slide_image_analysis.UI.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
-sys.modules['PyQt5.QtGui'] = QtGui
+from PIL import ImageQt
+
+from full_slide_image_analysis.UI.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 
 class ImageHelper:
@@ -16,22 +13,21 @@ class ImageHelper:
         self.current_coordinates = (0, 0)
         self.image_dimensions = self.level_dimensions[0]
         self.scale_factor = BASE_SCALE_FACTOR
-        self.current_movement_step = (self.image_dimensions[0] / self.scale_factor,
-                                      self.image_dimensions[1] / self.scale_factor)
+        self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
+                                      self.image_dimensions[1] // self.scale_factor)
         self.current_window_size = self.level_dimensions[self.current_level]
         self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
                                                       self.level_dimensions[self.current_level])
         self.image_slide = openslide.ImageSlide(self.image)
-        print(self.image_dimensions)
+        print (self.image_dimensions)
         self.print_status()
 
     def __calculate_movement_step_coordinates(self):
-        self.current_movement_step = (self.image_dimensions[0] / self.scale_factor,
-                                      self.image_dimensions[1] / self.scale_factor)
-        print('Current movement step:', self.current_movement_step)
+        self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
+                                      self.image_dimensions[1] // self.scale_factor)
+        print ('Current movement step:', self.current_movement_step)
 
     def get_q_image(self):
-
         self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
                                                       self.current_window_size)
         self.print_status()
@@ -53,11 +49,10 @@ class ImageHelper:
     def zoom_out(self):
         if self.current_level < self.openslide_image.level_count - 1:
             self.current_level = self.current_level + 1
-            self.scale_factor /= SCALE_MULTIPLIER
+            self.scale_factor //= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
         return self.change_image_properties()
 
-    # TODO look at openslide library http://openslide.org/api/python/#module-openslide
     def move_right(self):
         self.set_coordinates(self.current_coordinates[0] + self.current_movement_step[0],
                              self.current_coordinates[1])
@@ -93,7 +88,7 @@ class ImageHelper:
             return 0
 
     def print_status(self):
-        print('Current level:', self.current_level)
-        print('Level dimensions:', self.level_dimensions[self.current_level])
-        print('Coordinates:', self.current_coordinates)
-        print('\n')
+        print ('Current level:', self.current_level)
+        print ('Level dimensions:', self.current_window_size)
+        print ('Coordinates:', self.current_coordinates)
+        print ('\n')
