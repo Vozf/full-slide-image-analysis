@@ -7,9 +7,8 @@ from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QApplication, QMenu
 
-from UI.image_helper import ImageHelper
-from UI.ui_mainWindow import Ui_MainWindow
-
+from slide_analysis.UI import ImageHelper
+from slide_analysis.UI import Ui_MainWindow
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
