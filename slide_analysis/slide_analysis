@@ -1,7 +1,1 @@
-#!/usr/bin/env python
-
-
-if __name__ == "__main__":
-    from slide_analysis.scripts import launch
-
-    launch.main()
+#!/usr/bin/bash
