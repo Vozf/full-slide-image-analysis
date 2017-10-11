@@ -26,4 +26,6 @@ $ python3 setup.py install --user
 
 ## Run
 
-Execute `slide_analysis` script. 
+```
+$ slide_analysis
+```
