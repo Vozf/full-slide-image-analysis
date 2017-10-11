@@ -9,3 +9,6 @@ class TileStream:
         self.iteration += 1
         if self.iteration < self.max_iteration:
             return self.func(self.iteration)
+
+    def has_next(self):
+        return self.iteration + 1 < self.max_iteration
