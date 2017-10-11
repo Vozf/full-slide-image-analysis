@@ -1,15 +1,14 @@
-import slide_analysis.splitting_service.constants as constants
 import openslide
-
+from slide_analysis.splitting_service.constants import *
 from slide_analysis.utils import Tile
 from slide_analysis.utils import TileStream
 
 
 class SplittingService:
     def __init__(self):
-        self.tile_width = constants.BASE_TILE_WIDTH
-        self.tile_height = constants.BASE_TILE_HEIGHT
-        self.step = constants.BASE_STEP
+        self.tile_width = BASE_TILE_WIDTH
+        self.tile_height = BASE_TILE_HEIGHT
+        self.step = BASE_STEP
 
     def _open_image(self, filename):
         self.slide = openslide.open_slide(filename)
