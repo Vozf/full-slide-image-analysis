@@ -1,12 +1,14 @@
+# from PyQt5.QtCore import QDir, Qt
+# from PyQt5.QtGui import QPalette, QPixmap
+# from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
+#                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
+#
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
-from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
-                             QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QApplication, QMenu
 
-from ui_mainWindow import Ui_MainWindow
-from PySide.QtGui import *
-from PySide.QtCore import *
-from image_helper import ImageHelper
+from slide_analysis.UI.image_helper import ImageHelper
+from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
@@ -19,8 +21,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         # self.imageLabel = QLabel()
         self.imageLabel.setBackgroundRole(QPalette.Base)
-        self.imageLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        self.imageLabel.setScaledContents(True)
+        # self.imageLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        # self.imageLabel.setScaledContents(True)
 
         # self.scrollArea = QScrollArea()
         # self.scrollArea.setBackgroundRole(QPalette.Dark)
@@ -60,54 +62,61 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
             #             "Cannot load %s." % fileName)
             #     return
 
-            self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
-            self.scale_factor = 1.0
+            # self.scrollArea.setWidgetResizable(True)
 
-            self.fit_to_window_act.setEnabled(True)
-            self.update_actions()
+            # pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+            # scaledPixmap = pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio)
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
-            if not self.fit_to_window_act.isChecked():
-                self.imageLabel.adjustSize()
+            # self.imageLabel.adjustSize()
+            # self.fit_to_window_act.setEnabled(True)
+            # self.update_actions()
+
+            # if not self.fit_to_window_act.isChecked():
+            #     self.imageLabel.adjustSize()
+
+    def get_scaled_pixmap(self, qImage):
+        pixmap = QPixmap.fromImage(qImage)
+        return pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio)
 
     def zoom_in(self):
         # self.scaleImage(1.2)
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.zoom_in()))
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
 
     def zoom_out(self):
         # self.scaleImage(0.8)
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.zoom_out()))
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
 
     def move_right(self):
         self.image_helper.move_right()
-        print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
+        print(self.imageLabel.size())
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_left(self):
         self.image_helper.move_left()
-        print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
+        print(self.imageLabel.size())
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_up(self):
         self.image_helper.move_up()
-        print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
+        print(self.imageLabel.size())
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_down(self):
         self.image_helper.move_down()
-        print self.imageLabel.size()
-        self.imageLabel.setPixmap(QPixmap.fromImage(self.image_helper.get_q_image()))
+        print(self.imageLabel.size())
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def normal_size(self):
         self.imageLabel.adjustSize()
-        self.scale_factor = 1.0
 
-    def fit_to_window(self):
-        fitToWindow = self.fit_to_window_act.isChecked()
-        self.scrollArea.setWidgetResizable(fitToWindow)
-        if not fitToWindow:
-            self.normal_size()
-
-        self.update_actions()
+    # def fit_to_window(self):
+    #     fitToWindow = self.fit_to_window_act.isChecked()
+    #     self.scrollArea.setWidgetResizable(fitToWindow)
+    #     if not fitToWindow:
+    #         self.normal_size()
+    #
+    #     self.update_actions()
 
     def about(self):
         QMessageBox.about(self, "About Image Viewer",
@@ -137,17 +146,17 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.exit_act.setShortcut("Ctrl+Q")
         self.exit_act.triggered.connect(self.close)
 
-        self.zoom_in_act = QAction("Zoom &In (25%)", self)
+        self.zoom_in_act = QAction("Zoom &In", self)
         # , shortcut="Ctrl++",
         # enabled=False, triggered=self.zoomIn)
-        self.zoom_in_act.setEnabled(False)
+        # self.zoom_in_act.setEnabled(False)
         self.zoom_in_act.setShortcut("Ctrl++")
         self.zoom_in_act.triggered.connect(self.zoom_in)
 
-        self.zoom_out_act = QAction("Zoom &Out (25%)", self)
+        self.zoom_out_act = QAction("Zoom &Out", self)
         # , shortcut="Ctrl+-",
         # enabled=False, triggered=self.zoomOut)
-        self.zoom_out_act.setEnabled(False)
+        # self.zoom_out_act.setEnabled(False)
         self.zoom_out_act.setShortcut("Ctrl+-")
         self.zoom_out_act.triggered.connect(self.zoom_out)
 
@@ -155,16 +164,16 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         # , shortcut="Ctrl+S",
         # enabled=False, triggered=self.normalSize)
         self.normal_size_act.setShortcut("Ctrl+S")
-        self.normal_size_act.setEnabled(False)
+        # self.normal_size_act.setEnabled(False)
         self.normal_size_act.triggered.connect(self.normal_size)
 
-        self.fit_to_window_act = QAction("&Fit to Window", self)
-        # , enabled=False,
-        # checkable=True, shortcut="Ctrl+F", triggered=self.fitToWindow)
-        self.fit_to_window_act.setShortcut("Ctrl+F")
-        self.fit_to_window_act.setCheckable(True)
-        self.fit_to_window_act.setEnabled(False)
-        self.fit_to_window_act.triggered.connect(self.fit_to_window)
+        # self.fit_to_window_act = QAction("&Fit to Window", self)
+        # # , enabled=False,
+        # # checkable=True, shortcut="Ctrl+F", triggered=self.fitToWindow)
+        # self.fit_to_window_act.setShortcut("Ctrl+F")
+        # self.fit_to_window_act.setCheckable(True)
+        # self.fit_to_window_act.setEnabled(False)
+        # self.fit_to_window_act.triggered.connect(self.fit_to_window)
 
         self.about_act = QAction("&About", self)
         # , triggered=self.about)
@@ -192,7 +201,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
-
         self.file_menu = QMenu("&File", self)
         self.file_menu.addAction(self.open_act)
         self.file_menu.addSeparator()
@@ -203,7 +211,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.view_menu.addAction(self.zoom_out_act)
         self.view_menu.addAction(self.normal_size_act)
         self.view_menu.addSeparator()
-        self.view_menu.addAction(self.fit_to_window_act)
+        # self.view_menu.addAction(self.fit_to_window_act)
 
         self.navigation_menu = QMenu("&Navigation", self)
         self.navigation_menu.addAction(self.move_right_act)
@@ -220,10 +228,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
 
-    def update_actions(self):
-        self.zoom_in_act.setEnabled(not self.fit_to_window_act.isChecked())
-        self.zoom_out_act.setEnabled(not self.fit_to_window_act.isChecked())
-        self.normal_size_act.setEnabled(not self.fit_to_window_act.isChecked())
+    # def update_actions(self):
+    #     self.zoom_in_act.setEnabled(not self.fit_to_window_act.isChecked())
+    #     self.zoom_out_act.setEnabled(not self.fit_to_window_act.isChecked())
+    #     self.normal_size_act.setEnabled(not self.fit_to_window_act.isChecked())
 
     def scale_image(self, factor):
         self.scale_factor *= factor
