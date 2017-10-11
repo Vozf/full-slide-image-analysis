@@ -15,13 +15,13 @@ Install [requirements](requirements.txt).
 Then, install slide-analysis with:
 
 ```
-$ sudo python setup.py install
+$ sudo python3 setup.py install
 ```
 
 or if you want to install it locally:
 
 ```
-$ python setup.py install --user
+$ python3 setup.py install --user
 ```
 
 ## Run
