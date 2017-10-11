@@ -94,17 +94,17 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
     def move_left(self):
         self.image_helper.move_left()
-        print (self.imageLabel.size())
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_up(self):
         self.image_helper.move_up()
-        print (self.imageLabel.size())
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_down(self):
         self.image_helper.move_down()
-        print (self.imageLabel.size())
+        print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def normal_size(self):
@@ -201,7 +201,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
-
         self.file_menu = QMenu("&File", self)
         self.file_menu.addAction(self.open_act)
         self.file_menu.addSeparator()

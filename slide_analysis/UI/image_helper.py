@@ -18,13 +18,13 @@ class ImageHelper:
         self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
                                                       self.level_dimensions[self.current_level])
         self.image_slide = openslide.ImageSlide(self.image)
-        print (self.image_dimensions)
+        print(self.image_dimensions)
         self.print_status()
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
                                       self.image_dimensions[1] // self.scale_factor)
-        print ('Current movement step:', self.current_movement_step)
+        print('Current movement step:', self.current_movement_step)
 
     def get_q_image(self):
         self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
@@ -40,14 +40,14 @@ class ImageHelper:
     # Zooming is just moving to next level of image
     def zoom_in(self):
         if self.current_level != 0:
-            self.current_level = self.current_level - 1
+            self.current_level -= 1
             self.scale_factor *= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
         return self.change_image_properties()
 
     def zoom_out(self):
         if self.current_level < self.openslide_image.level_count - 1:
-            self.current_level = self.current_level + 1
+            self.current_level += 1
             self.scale_factor //= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
         return self.change_image_properties()
@@ -87,7 +87,7 @@ class ImageHelper:
             return 0
 
     def print_status(self):
-        print ('Current level:', self.current_level)
-        print ('Level dimensions:', self.current_window_size)
-        print ('Coordinates:', self.current_coordinates)
-        print ('\n')
+        print('Current level:', self.current_level)
+        print('Level dimensions:', self.current_window_size)
+        print('Coordinates:', self.current_coordinates)
+        print('\n')

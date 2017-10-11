@@ -1,7 +1,7 @@
 import openslide
 
 import slide_analysis.splitting_service.constants as constants
-from slide_analysis.utils import Tile
+from slide_analysis.utils.tile_class import Tile
 
 
 class SplittingService:
@@ -22,7 +22,6 @@ class SplittingService:
                      for y_index in range(y_coord, y_coord + self.tile_height)])
 
     def split_to_tiles(self, filename):
-
         self._open_image(filename)
 
         # dimensions of resulting array of tiles

@@ -1,4 +1,4 @@
-from full_slide_image_analysis.utils import Tile
+from slide_analysis.utils.tile_class import Tile
 
 
 class Descriptor:
