@@ -1,2 +1,0 @@
-from full_slide_image_analysis.utils.tile_class import Tile
-from full_slide_image_analysis.utils.tile_stream_class import TileStream

@@ -1,5 +1,4 @@
-from full_slide_image_analysis.descriptors.descriptor_class import Descriptor
-import numpy
+from slide_analysis.descriptors.descriptor_class import Descriptor
 
 
 class HistogramDescriptor(Descriptor):

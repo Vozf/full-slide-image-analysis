@@ -1,7 +1,0 @@
-#!/usr/bin/env python
-
-
-if __name__ == "__main__":
-    from full_slide_image_analysis.scripts import full_slide_image_analysis
-
-    full_slide_image_analysis.main()
