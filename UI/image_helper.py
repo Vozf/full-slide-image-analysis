@@ -1,14 +1,16 @@
 import openslide
 
 from PIL import ImageQt
+from openslide.deepzoom import DeepZoomGenerator
 
-from UI.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
+from UI.constants import *
 
 
 class ImageHelper:
     def __init__(self, file_name):
         self.openslide_image = openslide.OpenSlide(file_name)
         self.current_level = self.openslide_image.level_count - 1
+        self.max_level = self.openslide_image.level_count - 1
         self.level_dimensions = self.openslide_image.level_dimensions
         self.current_coordinates = (0, 0)
         self.image_dimensions = self.level_dimensions[0]
@@ -21,6 +23,23 @@ class ImageHelper:
         self.image_slide = openslide.ImageSlide(self.image)
         print (self.image_dimensions)
         self.print_status()
+        self.deep_zoom_generator = DeepZoomGenerator(self.openslide_image, 256, 0)
+
+    def get_tile_coodinates(self, mouse_pos_point, scroll_area_coordinates):
+        # scroll_area_coordinates = self.scrollArea.geometry()
+        actual_coordianates_x = (mouse_pos_point.x() - scroll_area_coordinates.x()) * self.current_window_size[0] // scroll_area_coordinates.width() * pow(2, self.current_level) + self.current_coordinates[0]
+        actual_coordianates_y = (mouse_pos_point.y() - scroll_area_coordinates.y()) * self.current_window_size[1] // scroll_area_coordinates.height() * pow(2, self.current_level) + self.current_coordinates[1]
+        print(actual_coordianates_x, actual_coordianates_y)
+        actual_coordianates = (actual_coordianates_x, actual_coordianates_y)
+
+        if actual_coordianates[0] >= 0 and actual_coordianates[1] >= 0:
+            print(actual_coordianates)
+            return actual_coordianates
+        else:
+            return 0, 0
+
+    def get_tile_from_coordinates(self, tile_coordinates):
+        return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, TILE_SIZE))
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
