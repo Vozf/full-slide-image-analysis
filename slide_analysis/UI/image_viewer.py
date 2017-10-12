@@ -3,110 +3,110 @@
 # from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
 #                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
 #
+from PyQt5 import QtGui, QtCore
+
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QApplication, QMenu
+from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.image_helper import ImageHelper
 from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
 
 
+class MyPopup(QWidget):
+    def __init__(self, tile):
+        QWidget.__init__(self)
+        self.tile_label = QLabel(self)
+        pixmap = QPixmap.fromImage(tile)
+        self.tile_label.setPixmap(pixmap)
+        self.resize(pixmap.width(), pixmap.height())
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Space:
+            self.close()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
+
+
 class ImageViewer(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(ImageViewer, self).__init__()
+        self.image_helper = None
         self.setupUi(self)
         self.show()
 
         self.scale_factor = 0.0
 
-        # self.imageLabel = QLabel()
         self.imageLabel.setBackgroundRole(QPalette.Base)
         # self.imageLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         # self.imageLabel.setScaledContents(True)
 
-        # self.scrollArea = QScrollArea()
-        # self.scrollArea.setBackgroundRole(QPalette.Dark)
-        # self.scrollArea.setWidget(self.imageLabel)
-        # self.setCentralWidget(self.scrollArea)
-
         self.create_actions()
         self.create_menus()
 
-        self.setWindowTitle("Image Viewer")
-        # self.resize(500, 400)
+    def resizeEvent(self, event):
+        if self.image_helper is not None:
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+
+    def mousePressEvent(self, qMouseEvent):
+
+        # print(self.scrollArea.geometry())
+        # print(qMouseEvent.pos())
+        # self.get_tile_coodinates(qMouseEvent.pos())
+        # self.display_tile(self.image_helper.get_tile_from_coordinates(self.get_tile_coodinates(qMouseEvent.pos())))
+        if self.image_helper is not None:
+            self.w = MyPopup(self.image_helper.get_tile_from_coordinates(
+                self.image_helper.get_tile_coodinates(qMouseEvent.pos(), self.scrollArea.geometry())))
+            self.w.show()
+
+    # def mouseReleaseEvent(self, qMouseEvent):
+    #     cursor = QtGui.QCursor()
+    #     print(cursor.pos())
 
     def open(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         if file_name:
-            # image = openslide.OpenSlide(fileName).read_region((0, 0), 1, (1000, 1000))
-            # openslideImage = openslide.OpenSlide(fileName)
-
             self.image_helper = ImageHelper(file_name)
-
-            # print openslideImage.dimensions
-            # print openslideImage.level_dimensions
-            # print openslideImage.level_count
-            # self.image = openslideImage.get_thumbnail((self.imageLabel.width(), self.imageLabel.height()))
-            #
-            # self.image = openslideImage.read_region((0, 0), openslideImage.level_count - 1,
-            #                                         openslideImage.level_dimensions[openslideImage.level_count - 1])
-
-            # image.convert("RGBA")
-            # qim = ImageQt.ImageQt(self.image)
-
-            # qim = self.imageHelper.get_QImage()
-
-            # image = QImage(fileName)
-            # if image.isNull():
-            #     QMessageBox.information(self, "Image Viewer",
-            #             "Cannot load %s." % fileName)
-            #     return
-
-            # self.scrollArea.setWidgetResizable(True)
-
-            # pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
-            # scaledPixmap = pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
-            # self.imageLabel.adjustSize()
-            # self.fit_to_window_act.setEnabled(True)
-            # self.update_actions()
-
-            # if not self.fit_to_window_act.isChecked():
-            #     self.imageLabel.adjustSize()
 
     def get_scaled_pixmap(self, qImage):
         pixmap = QPixmap.fromImage(qImage)
-        return pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio)
+        print(self.scrollArea.size())
+        return pixmap.scaled(self.scrollArea.width() - 20, self.scrollArea.height() - 20, Qt.IgnoreAspectRatio)
+
 
     def zoom_in(self):
-        # self.scaleImage(1.2)
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
+        if self.image_helper is not None:
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
 
     def zoom_out(self):
-        # self.scaleImage(0.8)
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
+        if self.image_helper is not None:
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
 
     def move_right(self):
-        self.image_helper.move_right()
-        print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+        if self.image_helper is not None:
+            self.image_helper.move_right()
+            # print(self.imageLabel.size())
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_left(self):
-        self.image_helper.move_left()
-        print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+        if self.image_helper is not None:
+            self.image_helper.move_left()
+            # print(self.imageLabel.size())
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_up(self):
-        self.image_helper.move_up()
-        print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+        if self.image_helper is not None:
+            self.image_helper.move_up()
+            # print(self.imageLabel.size())
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_down(self):
-        self.image_helper.move_down()
-        print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
+        if self.image_helper is not None:
+            self.image_helper.move_down()
+            # print(self.imageLabel.size())
+            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
     def normal_size(self):
         self.imageLabel.adjustSize()
 
