@@ -6,11 +6,6 @@ from PyQt5.QtWidgets import QLabel
 
 
 class TilePreviewPopup(QLabel):
-    """
-    The ImagePopup class is a QLabel that displays a popup, zoomed image
-    on top of another label.
-    """
-
     def __init__(self, tile):
         super().__init__()
         self.tile_label = QLabel(self)
