@@ -8,11 +8,10 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(800, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -22,7 +21,7 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 574, 536))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 772, 736))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -34,10 +33,10 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.imageLabel)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.scrollArea, 0, 1, 1, 1)
-        self.listView = QtWidgets.QListView(self.centralwidget)
-        self.listView.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.listView.setObjectName("listView")
-        self.gridLayout.addWidget(self.listView, 0, 0, 1, 1)
+        self.imageVerticalLayout = QtWidgets.QVBoxLayout()
+        self.imageVerticalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.imageVerticalLayout.setObjectName("imageVerticalLayout")
+        self.gridLayout.addLayout(self.imageVerticalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
@@ -54,3 +53,4 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.imageLabel.setText(_translate("MainWindow", "Image will be displayed here"))
+

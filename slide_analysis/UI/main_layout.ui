@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,8 +28,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>574</width>
-         <height>536</height>
+         <width>772</width>
+         <height>736</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -66,14 +66,11 @@
      </widget>
     </item>
     <item row="0" column="0">
-     <widget class="QListView" name="listView">
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
+     <layout class="QVBoxLayout" name="imageVerticalLayout">
+      <property name="topMargin">
+       <number>0</number>
       </property>
-     </widget>
+     </layout>
     </item>
    </layout>
   </widget>
