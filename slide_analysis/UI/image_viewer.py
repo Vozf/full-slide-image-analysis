@@ -3,108 +3,128 @@
 # from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
 #                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
 #
+from PyQt5 import QtCore
+
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QApplication, QMenu
+from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.image_helper import ImageHelper
+from slide_analysis.UI.tile_view_widget import TilePreviewPopup
 from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.constants import SIMILAR_TILE_SIZE
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(ImageViewer, self).__init__()
+        self.image_helper = None
         self.setupUi(self)
+        self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
+        self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
+        self.topImagesScrollArea.setWidgetResizable(True)
+        self.image_popup_widget = None
         self.show()
 
         self.scale_factor = 0.0
 
-        # self.imageLabel = QLabel()
         self.imageLabel.setBackgroundRole(QPalette.Base)
         # self.imageLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
         # self.imageLabel.setScaledContents(True)
 
-        # self.scrollArea = QScrollArea()
-        # self.scrollArea.setBackgroundRole(QPalette.Dark)
-        # self.scrollArea.setWidget(self.imageLabel)
-        # self.setCentralWidget(self.scrollArea)
-
         self.create_actions()
         self.create_menus()
 
-        self.setWindowTitle("Image Viewer")
-        # self.resize(500, 400)
+    def eventFilter(self, source, event):
+        if event.type() == QtCore.QEvent.MouseMove:
+            if event.buttons() == QtCore.Qt.NoButton and self.is_image_popup_shown():
+                self.image_popup_widget.close()
+        return QMainWindow.eventFilter(self, source, event)
+
+    def resizeEvent(self, event):
+        if not self.is_image_opened():
+            return
+        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+
+    def mousePressEvent(self, q_mouse_event):
+        if not self.is_image_opened():
+            return
+        tile = self.image_helper.get_tile_from_coordinates(
+                self.image_helper.get_tile_coodinates(q_mouse_event.pos(), self.scrollArea.geometry()))
+        self.image_popup_widget = TilePreviewPopup(tile)
+        self.image_popup_widget.show()
+        self.show_top_n([tile])
+
+    def mouseReleaseEvent(self, q_mouse_event):
+        if not self.is_image_popup_shown():
+            return
+        self.image_popup_widget.close()
+        q_mouse_event.accept()
+
+    def show_top_n(self, tiles):
+        for i in reversed(range(self.imageVerticalLayout.count())):
+            self.imageVerticalLayout.removeItem(self.imageVerticalLayout.itemAt(i))
+
+        for tile in tiles:
+            label = QLabel()
+            pixmap = QPixmap.fromImage(tile)
+            pixmap = pixmap.scaled(SIMILAR_TILE_SIZE[0], SIMILAR_TILE_SIZE[1], Qt.KeepAspectRatio)
+            label.setPixmap(pixmap)
+            self.imageVerticalLayout.addWidget(label)
+
+    def is_image_opened(self):
+        return self.image_helper is not None
+
+    def is_image_popup_shown(self):
+        return self.image_popup_widget is not None
 
     def open(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         if file_name:
-            # image = openslide.OpenSlide(fileName).read_region((0, 0), 1, (1000, 1000))
-            # openslideImage = openslide.OpenSlide(fileName)
-
             self.image_helper = ImageHelper(file_name)
-
-            # print openslideImage.dimensions
-            # print openslideImage.level_dimensions
-            # print openslideImage.level_count
-            # self.image = openslideImage.get_thumbnail((self.imageLabel.width(), self.imageLabel.height()))
-            #
-            # self.image = openslideImage.read_region((0, 0), openslideImage.level_count - 1,
-            #                                         openslideImage.level_dimensions[openslideImage.level_count - 1])
-
-            # image.convert("RGBA")
-            # qim = ImageQt.ImageQt(self.image)
-
-            # qim = self.imageHelper.get_QImage()
-
-            # image = QImage(fileName)
-            # if image.isNull():
-            #     QMessageBox.information(self, "Image Viewer",
-            #             "Cannot load %s." % fileName)
-            #     return
-
-            # self.scrollArea.setWidgetResizable(True)
-
-            # pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
-            # scaledPixmap = pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
-            # self.imageLabel.adjustSize()
-            # self.fit_to_window_act.setEnabled(True)
-            # self.update_actions()
-
-            # if not self.fit_to_window_act.isChecked():
-            #     self.imageLabel.adjustSize()
-
-    def get_scaled_pixmap(self, qImage):
-        pixmap = QPixmap.fromImage(qImage)
-        return pixmap.scaled(self.imageLabel.size(), Qt.KeepAspectRatio)
+    def get_scaled_pixmap(self, q_image):
+        pixmap = QPixmap.fromImage(q_image)
+        print('Scroll area size: ', self.scrollArea.size())
+        return pixmap.scaled(self.scrollArea.width() - 20, self.scrollArea.height() - 20, Qt.IgnoreAspectRatio)
 
     def zoom_in(self):
-        # self.scaleImage(1.2)
+        if not self.is_image_opened():
+            return
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
 
     def zoom_out(self):
-        # self.scaleImage(0.8)
+        if not self.is_image_opened():
+            return
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
 
     def move_right(self):
+        if not self.is_image_opened():
+            return
         self.image_helper.move_right()
-        print(self.imageLabel.size())
+        # print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_left(self):
+        if not self.is_image_opened():
+            return
         self.image_helper.move_left()
-        print(self.imageLabel.size())
+        # print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_up(self):
+        if not self.is_image_opened():
+            return
         self.image_helper.move_up()
-        print(self.imageLabel.size())
+        # print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def move_down(self):
+        if not self.is_image_opened():
+            return
         self.image_helper.move_down()
-        print(self.imageLabel.size())
+        # print(self.imageLabel.size())
         self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def normal_size(self):
@@ -233,20 +253,21 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     #     self.zoom_out_act.setEnabled(not self.fit_to_window_act.isChecked())
     #     self.normal_size_act.setEnabled(not self.fit_to_window_act.isChecked())
 
-    def scale_image(self, factor):
-        self.scale_factor *= factor
-        self.imageLabel.resize(self.scale_factor * self.imageLabel.pixmap().size())
-
-        self.adjust_scroll_bar(self.scrollArea.horizontalScrollBar(), factor)
-        self.adjust_scroll_bar(self.scrollArea.verticalScrollBar(), factor)
-
-        self.zoom_in_act.setEnabled(self.scale_factor < 3.0)
-        self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
+    # def scale_image(self, factor):
+    #     self.scale_factor *= factor
+    #     self.imageLabel.resize(self.scale_factor * self.imageLabel.pixmap().size())
+    #
+    #     self.adjust_scroll_bar(self.scrollArea.horizontalScrollBar(), factor)
+    #     self.adjust_scroll_bar(self.scrollArea.verticalScrollBar(), factor)
+    #
+    #     self.zoom_in_act.setEnabled(self.scale_factor < 3.0)
+    #     self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
 
     @staticmethod
     def run(argv):
         app = QApplication(argv)
         image_viewer = ImageViewer()
+        app.installEventFilter(image_viewer)
         image_viewer.show()
         return app.exec_()
 
