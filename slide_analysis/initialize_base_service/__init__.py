@@ -1,1 +1,3 @@
 from slide_analysis.initialize_base_service.init_base_service import InitBaseService
+from slide_analysis.initialize_base_service.splitting_service import SplittingService
+from slide_analysis.initialize_base_service.tile_stream_class import TileStream
