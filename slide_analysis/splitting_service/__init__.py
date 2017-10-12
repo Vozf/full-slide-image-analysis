@@ -1,1 +1,1 @@
-
+from slide_analysis.splitting_service.splitting_service import SplittingService

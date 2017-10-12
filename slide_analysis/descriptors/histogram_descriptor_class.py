@@ -2,16 +2,33 @@ from slide_analysis.descriptors.descriptor_class import Descriptor
 
 
 class HistogramDescriptor(Descriptor):
-    def __init__(self, tile, scheme):
-        Descriptor.__init__(self, tile)
-        self.scheme = scheme
-        (self.r_mod, self.g_mod, self.b_mod) = self.scheme
+    def __init__(self, scheme):
+        Descriptor.__init__(self)
+        (self.r_mod, self.g_mod, self.b_mod) = scheme
 
-    def rgb_use_scheme(self, rgb):
-        (r, g, b) = rgb
-        res = r >> (8 - self.r_mod) << (8 - self.r_mod)\
-                    + g >> (8 - self.g_mod) << (8 - self.g_mod - self.r_mod)\
-                    + b >> (8 - self.b_mod)
+    def set_tile(self, tile):
+        self.tile = tile
+
+    def set_val(self, value):
+        self.has_value = True
+        self.value = value
+
+    def get_simplified(self, rgba):
+        (r, g, b, a) = rgba
+        return (r >> (8 - self.r_mod) << (8 - self.r_mod))\
+                    + (g >> (8 - self.g_mod) << (8 - self.g_mod - self.r_mod))\
+                    + (b >> (8 - self.b_mod))
 
     def _calc(self):
-        tile = self.tile
+        for i in range(0, len(self.tile.data)):
+            self.value[self.get_simplified(self.tile.data[i])] += 1
+
+        self.has_value = True
+
+    def get_value(self):
+        if self.has_value:
+            return self.value
+        else:
+            self._calc()
+            self.has_value = True
+            return self.value
