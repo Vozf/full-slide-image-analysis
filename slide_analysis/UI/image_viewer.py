@@ -11,22 +11,63 @@ from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.image_helper import ImageHelper
 from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.constants import SIMILAR_TILE_SIZE
+
+# class MyPopup(QWidget):
+#     def __init__(self, tile):
+#         QWidget.__init__(self)
+#         self.tile_label = QLabel(self)
+#         pixmap = QPixmap.fromImage(tile)
+#         self.tile_label.setPixmap(pixmap)
+#         self.resize(pixmap.width(), pixmap.height())
+#         position = self.cursor().pos()
+#         # position.setX(position.x() - thumb.size().width())
+#         # position.setY(position.y() - thumb.size().height())
+#         self.move(position)
+#         self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
+#                             | Qt.FramelessWindowHint
+#                             | Qt.X11BypassWindowManagerHint)
+#
+#     def keyPressEvent(self, event):
+#         if event.key() == QtCore.Qt.Key_Space:
+#             self.close()
+#             event.accept()
+#         else:
+#             super().keyPressEvent(event)
 
 
-class MyPopup(QWidget):
+class ImagePopup(QLabel):
+    """
+    The ImagePopup class is a QLabel that displays a popup, zoomed image
+    on top of another label.
+    """
+
     def __init__(self, tile):
         QWidget.__init__(self)
         self.tile_label = QLabel(self)
         pixmap = QPixmap.fromImage(tile)
         self.tile_label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
+        position = self.cursor().pos()
+        # position.setX(position.x() - thumb.size().width())
+        #  position.setY(position.y() - thumb.size().height())
+        self.move(position)
+        self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
+                            | Qt.FramelessWindowHint
+                            | Qt.X11BypassWindowManagerHint)
 
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Space:
-            self.close()
-            event.accept()
-        else:
-            super().keyPressEvent(event)
+    def leaveEvent(self, event):
+        """ When the mouse leave this widget, destroy it. """
+        self.destroy()
+
+
+# class ImageLabel(QLabel):
+#     """ This widget displays an ImagePopup when the mouse enter its region """
+#
+#     def enterEvent(self, event):
+#         self.p = ImagePopup(self)
+#         self.p.show()
+#         event.accept()
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
@@ -34,6 +75,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         super(ImageViewer, self).__init__()
         self.image_helper = None
         self.setupUi(self)
+        self.imageVerticalLayout.addSpacerItem(QSpacerItem(SIMILAR_TILE_SIZE[0] + 6, 0))
+        self.image_popup_widget = None
         self.show()
 
         self.scale_factor = 0.0
@@ -49,20 +92,32 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         if self.image_helper is not None:
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
+    # def enterEvent(self, qMouseEvent):
+    #     if self.image_helper is not None:
+    #         tile = self.image_helper.get_tile_from_coordinates(
+    #             self.image_helper.get_tile_coodinates(qMouseEvent.pos(), self.scrollArea.geometry()))
+    #         self.p = ImagePopup(tile)
+    #         self.p.show()
+    #         qMouseEvent.accept()
+
     def mousePressEvent(self, qMouseEvent):
+
 
         # print(self.scrollArea.geometry())
         # print(qMouseEvent.pos())
         # self.get_tile_coodinates(qMouseEvent.pos())
         # self.display_tile(self.image_helper.get_tile_from_coordinates(self.get_tile_coodinates(qMouseEvent.pos())))
         if self.image_helper is not None:
-            self.w = MyPopup(self.image_helper.get_tile_from_coordinates(
-                self.image_helper.get_tile_coodinates(qMouseEvent.pos(), self.scrollArea.geometry())))
-            self.w.show()
+            tile = self.image_helper.get_tile_from_coordinates(
+                self.image_helper.get_tile_coodinates(qMouseEvent.pos(), self.scrollArea.geometry()))
+            self.image_popup_widget = ImagePopup(tile)
+            self.image_popup_widget.show()
+            self.show_top_n([tile])
 
-    # def mouseReleaseEvent(self, qMouseEvent):
-    #     cursor = QtGui.QCursor()
-    #     print(cursor.pos())
+    def mouseReleaseEvent(self, qMouseEvent):
+        if self.image_popup_widget is not None:
+            self.image_popup_widget.close()
+        qMouseEvent.accept()
 
     def open(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
@@ -75,6 +130,16 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         print(self.scrollArea.size())
         return pixmap.scaled(self.scrollArea.width() - 20, self.scrollArea.height() - 20, Qt.IgnoreAspectRatio)
 
+    def show_top_n(self, tiles):
+        for i in reversed(range(self.imageVerticalLayout.count())):
+            self.imageVerticalLayout.removeItem(self.imageVerticalLayout.itemAt(i))
+
+        for tile in tiles:
+            label = QLabel("")
+            pixmap = QPixmap.fromImage(tile)
+            pixmap = pixmap.scaled(SIMILAR_TILE_SIZE[0], SIMILAR_TILE_SIZE[1], Qt.IgnoreAspectRatio)
+            label.setPixmap(pixmap)
+            self.imageVerticalLayout.addWidget(label)
 
     def zoom_in(self):
         if self.image_helper is not None:
