@@ -15,6 +15,29 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QScrollArea" name="topImagesScrollArea">
+      <property name="maximumSize">
+       <size>
+        <width>260</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="topImagesScrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>258</width>
+         <height>736</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
     <item row="0" column="1">
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizeAdjustPolicy">
@@ -28,7 +51,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>772</width>
+         <width>514</width>
          <height>736</height>
         </rect>
        </property>
@@ -64,13 +87,6 @@
        </layout>
       </widget>
      </widget>
-    </item>
-    <item row="0" column="0">
-     <layout class="QVBoxLayout" name="imageVerticalLayout">
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-     </layout>
     </item>
    </layout>
   </widget>

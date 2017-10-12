@@ -3,7 +3,7 @@
 # from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
 #                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
 #
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
@@ -49,8 +49,6 @@ class ImagePopup(QLabel):
         self.tile_label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
         position = self.cursor().pos()
-        # position.setX(position.x() - thumb.size().width())
-        #  position.setY(position.y() - thumb.size().height())
         self.move(position)
         self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
                             | Qt.FramelessWindowHint
@@ -60,6 +58,12 @@ class ImagePopup(QLabel):
         """ When the mouse leave this widget, destroy it. """
         self.destroy()
 
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Space:
+            self.close()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
 
 # class ImageLabel(QLabel):
 #     """ This widget displays an ImagePopup when the mouse enter its region """
@@ -75,7 +79,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         super(ImageViewer, self).__init__()
         self.image_helper = None
         self.setupUi(self)
-        self.imageVerticalLayout.addSpacerItem(QSpacerItem(SIMILAR_TILE_SIZE[0] + 6, 0))
+        self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
+        self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
+        self.topImagesScrollArea.setWidgetResizable(True)
         self.image_popup_widget = None
         self.show()
 
@@ -92,13 +98,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         if self.image_helper is not None:
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
-    # def enterEvent(self, qMouseEvent):
-    #     if self.image_helper is not None:
-    #         tile = self.image_helper.get_tile_from_coordinates(
-    #             self.image_helper.get_tile_coodinates(qMouseEvent.pos(), self.scrollArea.geometry()))
-    #         self.p = ImagePopup(tile)
-    #         self.p.show()
-    #         qMouseEvent.accept()
 
     def mousePressEvent(self, qMouseEvent):
 
@@ -137,7 +136,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         for tile in tiles:
             label = QLabel("")
             pixmap = QPixmap.fromImage(tile)
-            pixmap = pixmap.scaled(SIMILAR_TILE_SIZE[0], SIMILAR_TILE_SIZE[1], Qt.IgnoreAspectRatio)
+            pixmap = pixmap.scaled(SIMILAR_TILE_SIZE[0], SIMILAR_TILE_SIZE[1], Qt.KeepAspectRatio)
             label.setPixmap(pixmap)
             self.imageVerticalLayout.addWidget(label)
 
