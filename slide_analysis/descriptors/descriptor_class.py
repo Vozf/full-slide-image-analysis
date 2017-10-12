@@ -1,15 +1,4 @@
-from slide_analysis.utils.tile_class import Tile
-
-
 class Descriptor:
-    def __init__(self, tile):
-        self.tile = tile
-        self._calc()
-
-    def _calc(self):
-        tile = self.tile
-
-        self.value = ''
-
-    def get_value(self):
-        return self.value
+    def __init__(self):
+        self.value = [0 for t in range(0, 256)]
+        self.has_value = False
