@@ -22,13 +22,3 @@ class HistogramDescriptor(Descriptor):
     def _calc(self):
         for i in range(0, len(self.tile.data)):
             self.value[self.get_simplified(self.tile.data[i])] += 1
-
-        self.has_value = True
-
-    def get_value(self):
-        if self.has_value:
-            return self.value
-        else:
-            self._calc()
-            self.has_value = True
-            return self.value
