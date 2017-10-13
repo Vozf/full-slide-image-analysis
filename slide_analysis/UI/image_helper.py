@@ -27,11 +27,10 @@ class ImageHelper:
             0] // scroll_area_coordinates.width() * pow(2, self.current_level) + self.current_coordinates[0]
         actual_coordianates_y = (mouse_pos_point.y() - scroll_area_coordinates.y()) * self.current_window_size[
             1] // scroll_area_coordinates.height() * pow(2, self.current_level) + self.current_coordinates[1]
-        print(actual_coordianates_x, actual_coordianates_y)
+        print('User selected tile coordinates: ', actual_coordianates_x, actual_coordianates_y)
         actual_coordianates = (actual_coordianates_x, actual_coordianates_y)
 
         if actual_coordianates[0] >= 0 and actual_coordianates[1] >= 0:
-            print(actual_coordianates)
             return actual_coordianates
         else:
             return 0, 0
