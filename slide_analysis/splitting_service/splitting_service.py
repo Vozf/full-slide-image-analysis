@@ -1,6 +1,6 @@
-from slide_analysis.initialize_base_service.constants import *
+from slide_analysis.splitting_service.constants import *
 from slide_analysis.utils import Tile
-from slide_analysis.initialize_base_service.tile_stream_class import TileStream
+from slide_analysis.utils.tile_stream_class import TileStream
 
 
 class SplittingService:
