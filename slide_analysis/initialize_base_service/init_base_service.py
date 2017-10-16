@@ -1,11 +1,6 @@
 import os
 import pickle
 
-import openslide
-
-from slide_analysis.descriptors import HistogramDescriptor
-from slide_analysis.splitting_service.splitting_service import SplittingService
-
 
 class InitBaseService:
     def __init__(self, path):
