@@ -15,4 +15,5 @@ class TileStream:
 
     def for_each(self, func):
         while self.has_next():
+            print(str(self.iteration) + '/' + str(self.length))
             func(self.next())

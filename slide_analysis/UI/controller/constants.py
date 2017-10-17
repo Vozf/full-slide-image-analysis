@@ -1,0 +1,1 @@
+DESCRIPTOR_DIRECTORY_PATH = '../descriptor_apply_service'

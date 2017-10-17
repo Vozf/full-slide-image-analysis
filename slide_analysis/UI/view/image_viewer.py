@@ -6,14 +6,17 @@
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QMessageBox, QAction, QApplication, QMenu
+from slide_analysis.UI.view import ImageHelper
 
-from slide_analysis.UI.image_helper import ImageHelper
-from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, controller, model):
         super(ImageViewer, self).__init__()
+        self.model = model
+        self.controller = controller
+
         self.setupUi(self)
         self.show()
 
@@ -36,12 +39,13 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         # self.resize(500, 400)
 
     def open(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
-        if file_name:
+        filename, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
+        print(filename)
+        if filename:
             # image = openslide.OpenSlide(fileName).read_region((0, 0), 1, (1000, 1000))
             # openslideImage = openslide.OpenSlide(fileName)
 
-            self.image_helper = ImageHelper(file_name)
+            self.image_helper = ImageHelper(filename)
 
             # print openslideImage.dimensions
             # print openslideImage.level_dimensions
@@ -199,6 +203,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.move_down_act.setShortcut("Down")
         self.move_down_act.triggered.connect(self.move_down)
 
+        self.calculate_descriptors = QAction("&Calculate descriptors", self)
+        self.calculate_descriptors.setShortcut("Ctrl+R")
+        self.calculate_descriptors.triggered.connect(self.controller.calculate_descriptors)
+
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
         self.file_menu = QMenu("&File", self)
@@ -218,6 +226,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.navigation_menu.addAction(self.move_left_act)
         self.navigation_menu.addAction(self.move_down_act)
         self.navigation_menu.addAction(self.move_up_act)
+
+        self.navigation_menu = QMenu("&Descriptors", self)
+        self.navigation_menu.addAction(self.calculate_descriptors)
 
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)
@@ -242,13 +253,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         self.zoom_in_act.setEnabled(self.scale_factor < 3.0)
         self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
-
-    @staticmethod
-    def run(argv):
-        app = QApplication(argv)
-        image_viewer = ImageViewer()
-        image_viewer.show()
-        return app.exec_()
 
     @staticmethod
     def adjust_scroll_bar(scroll_bar, factor):

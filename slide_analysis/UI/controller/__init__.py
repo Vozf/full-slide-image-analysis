@@ -1,0 +1,1 @@
+from slide_analysis.UI.controller.controller_class import Controller

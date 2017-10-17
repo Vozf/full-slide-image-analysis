@@ -1,6 +1,7 @@
 import sys
 
-from slide_analysis.UI.image_viewer import ImageViewer
+from slide_analysis.UI.controller import Controller
 
 if __name__ == '__main__':
-    sys.exit(ImageViewer.run(sys.argv))
+    controller = Controller(sys.argv)
+    sys.exit(controller.run())
