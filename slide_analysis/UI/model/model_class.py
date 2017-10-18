@@ -7,7 +7,7 @@ from slide_analysis.splitting_service import SplittingService
 class Model:
     def __init__(self):
         self.descriptors = [HistogramDescriptor, TestDescriptor]
-        self.params = [None, (3, 2, 3)]
+        self.params = [(3, 2, 3), None]
 
     def calculate_descriptors(self, idx, filepath, directory_path):
         split = SplittingService()
