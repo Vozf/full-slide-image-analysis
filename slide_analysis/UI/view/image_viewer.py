@@ -266,7 +266,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
-        self.menuBar().addMenu(self.descriptor_menu)
 
     # def update_actions(self):
     #     self.zoom_in_act.setEnabled(not self.fit_to_window_act.isChecked())

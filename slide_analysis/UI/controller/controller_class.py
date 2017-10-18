@@ -9,6 +9,7 @@ class Controller:
         self.app = QApplication(argv)
         self.model = Model()
         self.image_viewer = ImageViewer(self, self.model)
+        self.app.installEventFilter(self.image_viewer)
 
     def run(self):
         self.image_viewer.show()
