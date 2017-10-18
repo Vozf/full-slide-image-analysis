@@ -203,9 +203,14 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.move_down_act.setShortcut("Down")
         self.move_down_act.triggered.connect(self.move_down)
 
-        self.calculate_descriptors = QAction("&Calculate descriptors", self)
-        self.calculate_descriptors.setShortcut("Ctrl+R")
-        self.calculate_descriptors.triggered.connect(self.controller.calculate_descriptors)
+        descriptors = self.controller.get_descriptors()
+
+        descriptors_action = list(map(lambda x: QAction(x.get_name()), descriptors))
+
+        for i in range(len(descriptors_action)):
+            descriptors_action[i].triggered.connect(self.controller.calculate_descriptors_idx(i))
+
+        self.descriptors = descriptors_action
 
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
@@ -227,8 +232,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.navigation_menu.addAction(self.move_down_act)
         self.navigation_menu.addAction(self.move_up_act)
 
-        self.navigation_menu = QMenu("&Descriptors", self)
-        self.navigation_menu.addAction(self.calculate_descriptors)
+        self.descriptor_menu = QMenu("&Descriptors", self)
+        for desc in self.descriptors:
+            self.descriptor_menu.addAction(desc)
 
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)
@@ -238,6 +244,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.menuBar().addMenu(self.view_menu)
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
+        self.menuBar().addMenu(self.descriptor_menu)
 
     # def update_actions(self):
     #     self.zoom_in_act.setEnabled(not self.fit_to_window_act.isChecked())

@@ -7,3 +7,7 @@ class TestDescriptor:
         (r, g, b, a) = self.tile.data[0]
         self.value = r + g + b
         del self.tile.data
+
+    @staticmethod
+    def get_name():
+        return "Test"

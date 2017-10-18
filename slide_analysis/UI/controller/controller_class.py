@@ -14,7 +14,12 @@ class Controller:
         self.image_viewer.show()
         return self.app.exec_()
 
-    def calculate_descriptors(self):
-        filename = self.image_viewer.image_helper.filename
-        self.model.calculate_descriptors(filename, DESCRIPTOR_DIRECTORY_PATH)
+    def calculate_descriptors_idx(self, idx):
+        def calculate_descriptor():
+            filename = self.image_viewer.image_helper.filename
+            self.model.calculate_descriptors(idx, filename, DESCRIPTOR_DIRECTORY_PATH)
 
+        return calculate_descriptor
+
+    def get_descriptors(self):
+        return self.model.descriptors

@@ -12,3 +12,7 @@ class HistogramDescriptor:
                                      + (arr[:, 1] >> (8 - self.b_mod) << self.g_mod)
                                      + (arr[:, 2] >> (8 - self.g_mod)), bins=numpy.arange(0, 256))[0]
         del tile.data
+
+    @staticmethod
+    def get_name():
+        return "Histogram"
