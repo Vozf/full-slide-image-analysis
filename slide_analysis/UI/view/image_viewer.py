@@ -8,16 +8,20 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import *
+from slide_analysis.UI.view import ImageHelper
 
-from slide_analysis.UI.image_helper import ImageHelper
-from slide_analysis.UI.tile_view_widget import TilePreviewPopup
-from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
-from slide_analysis.UI.constants import SIMILAR_TILE_SIZE
+from slide_analysis.UI.view.image_helper import ImageHelper
+from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
+from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.view.constants import SIMILAR_TILE_SIZE
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, controller, model):
         super(ImageViewer, self).__init__()
+        self.model = model
+        self.controller = controller
+
         self.image_helper = None
         self.setupUi(self)
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
@@ -79,9 +83,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         return self.image_popup_widget is not None
 
     def open(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
-        if file_name:
-            self.image_helper = ImageHelper(file_name)
+        filename, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
+        print(filename)
+        if filename:
+            self.image_helper = ImageHelper(filename)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def get_scaled_pixmap(self, q_image):
@@ -219,6 +224,15 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.move_down_act.setShortcut("Down")
         self.move_down_act.triggered.connect(self.move_down)
 
+        descriptors = self.controller.get_descriptors()
+
+        descriptors_action = list(map(lambda x: QAction(x.get_name()), descriptors))
+
+        for i in range(len(descriptors_action)):
+            descriptors_action[i].triggered.connect(self.controller.calculate_descriptors_idx(i))
+
+        self.descriptors = descriptors_action
+
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
         self.file_menu = QMenu("&File", self)
@@ -239,12 +253,17 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.navigation_menu.addAction(self.move_down_act)
         self.navigation_menu.addAction(self.move_up_act)
 
+        self.descriptor_menu = QMenu("&Descriptors", self)
+        for desc in self.descriptors:
+            self.descriptor_menu.addAction(desc)
+
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)
         self.help_menu.addAction(self.about_qt_act)
 
         self.menuBar().addMenu(self.file_menu)
         self.menuBar().addMenu(self.view_menu)
+        self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
 
@@ -262,14 +281,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     #
     #     self.zoom_in_act.setEnabled(self.scale_factor < 3.0)
     #     self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
-
-    @staticmethod
-    def run(argv):
-        app = QApplication(argv)
-        image_viewer = ImageViewer()
-        app.installEventFilter(image_viewer)
-        image_viewer.show()
-        return app.exec_()
 
     @staticmethod
     def adjust_scroll_bar(scroll_bar, factor):

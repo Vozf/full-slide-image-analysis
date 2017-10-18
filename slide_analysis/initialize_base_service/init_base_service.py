@@ -1,36 +1,30 @@
-from slide_analysis.descriptors import HistogramDescriptor
-from slide_analysis.splitting_service import SplittingService
-from slide_analysis.utils import Tile, TileStream
 import os
+import pickle
 
 
 class InitBaseService:
     def __init__(self, path):
-        self.base_path = path
-        self.splitting_service = SplittingService()
+        if path[-1] == '/':
+            self.base_path = path
+        else:
+            self.base_path = path + '/'
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
 
-    def write_to_file(self, file, descr):
-        file.write(descr.val)
+    def write_to_file(self, tile):
+        descr = self.descriptor_class(self.descriptor_params)
+        descr.calc_by_tile(tile)
+        pickle.dump(descr, self.opened_descr_file)
 
-    def init_base(self, filename, descriptor_type, descriptor_params):
-        dirname = filename[0:filename.find('.')]
-        if not os.path.exists(self.base_path + '/' + dirname):
-            os.mkdir(self.base_path + '/' + dirname)
+    def init_base(self, tile_stream, descriptor_class, descriptor_params, imagename, classname):
+        self.tile_stream = tile_stream
+        self.descriptor_class = descriptor_class
+        self.descriptor_params = descriptor_params
+        self.descr_path = self.base_path + imagename[0:imagename.find('.')] + '/' + classname + '/'
+        self.descr_filename = self.descr_path + str(descriptor_params) + '.bin'
+        if not os.path.exists(self.descr_path):
+            os.makedirs(self.descr_path)
 
-        os.chdir(self.base_path + '/' + dirname)
-        if descriptor_type == 'Histogram':
-            if not os.path.exists(os.getcwd() + '/Histogram'):
-                os.mkdir(os.getcwd() + '/Histogram')
-
-            os.chdir(os.getcwd() + '/Histogram')
-            file = open(os.getcwd() + '/descr.txt', 'w')
-
-            tile_stream = self.splitting_service.split_to_tiles(filename)
-            while tile_stream.has_next():
-                descr = HistogramDescriptor(descriptor_params)
-                descr.set_tile(tile_stream.next())
-                file.write(str(descr.get_value())[1:-1] + '\n')
-
-            file.close()
+        with open(self.descr_filename, 'wb') as file:
+            self.opened_descr_file = file
+            self.tile_stream.for_each(self.write_to_file)

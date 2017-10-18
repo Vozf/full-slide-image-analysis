@@ -1,8 +1,8 @@
-import openslide
 from slide_analysis.splitting_service.constants import *
 from slide_analysis.utils import Tile
-from slide_analysis.utils import TileStream
+from slide_analysis.utils.tile_stream_class import TileStream
 
+import openslide
 
 class SplittingService:
     def __init__(self):
@@ -24,9 +24,10 @@ class SplittingService:
         return x_coord, y_coord
 
     def _cut_tile(self, x_coord, y_coord):
-        return Tile(x_coord, y_coord, self.tile_width, self.tile_height,
+        ret = Tile(x_coord, y_coord, self.tile_width, self.tile_height,
                     self.slide.read_region((x_coord, y_coord), 0,
                                            (self.tile_width, self.tile_height)).getdata())
+        return ret
 
     def cut_tile(self, index):
         params = self._get_params_for_cut(index)

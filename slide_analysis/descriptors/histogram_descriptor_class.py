@@ -1,24 +1,18 @@
-from slide_analysis.descriptors.descriptor_class import Descriptor
+import numpy
 
 
-class HistogramDescriptor(Descriptor):
+class HistogramDescriptor:
     def __init__(self, scheme):
-        Descriptor.__init__(self)
         (self.r_mod, self.g_mod, self.b_mod) = scheme
 
-    def set_tile(self, tile):
+    def calc_by_tile(self, tile):
         self.tile = tile
+        arr = numpy.array(tile.data)
+        self.value = numpy.histogram((arr[:, 0] >> (8 - self.r_mod) << (8 - self.r_mod))
+                                     + (arr[:, 1] >> (8 - self.b_mod) << self.g_mod)
+                                     + (arr[:, 2] >> (8 - self.g_mod)), bins=numpy.arange(0, 256))[0]
+        del tile.data
 
-    def set_val(self, value):
-        self.has_value = True
-        self.value = value
-
-    def get_simplified(self, rgba):
-        (r, g, b, a) = rgba
-        return (r >> (8 - self.r_mod) << (8 - self.r_mod))\
-                    + (g >> (8 - self.g_mod) << (8 - self.g_mod - self.r_mod))\
-                    + (b >> (8 - self.b_mod))
-
-    def _calc(self):
-        for i in range(0, len(self.tile.data)):
-            self.value[self.get_simplified(self.tile.data[i])] += 1
+    @staticmethod
+    def get_name():
+        return "Histogram"
