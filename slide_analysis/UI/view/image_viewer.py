@@ -8,7 +8,6 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import *
-from slide_analysis.UI.view import ImageHelper
 
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
@@ -23,6 +22,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.controller = controller
 
         self.image_helper = None
+        self.user_selected_coordinates = None
         self.setupUi(self)
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
@@ -53,8 +53,11 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     def mousePressEvent(self, q_mouse_event):
         if not self.is_image_opened():
             return
-        tile = self.image_helper.get_tile_from_coordinates(
-                self.image_helper.get_tile_coodinates(q_mouse_event.pos(), self.scrollArea.geometry()))
+
+        self.user_selected_coordinates = self.image_helper\
+            .get_tile_coordinates(q_mouse_event.pos(), self.scrollArea.geometry())
+
+        tile = self.image_helper.get_tile_from_coordinates(self.user_selected_coordinates)
         self.image_popup_widget = TilePreviewPopup(tile)
         self.image_popup_widget.show()
         self.show_top_n([tile])
@@ -266,23 +269,3 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
-
-    # def update_actions(self):
-    #     self.zoom_in_act.setEnabled(not self.fit_to_window_act.isChecked())
-    #     self.zoom_out_act.setEnabled(not self.fit_to_window_act.isChecked())
-    #     self.normal_size_act.setEnabled(not self.fit_to_window_act.isChecked())
-
-    # def scale_image(self, factor):
-    #     self.scale_factor *= factor
-    #     self.imageLabel.resize(self.scale_factor * self.imageLabel.pixmap().size())
-    #
-    #     self.adjust_scroll_bar(self.scrollArea.horizontalScrollBar(), factor)
-    #     self.adjust_scroll_bar(self.scrollArea.verticalScrollBar(), factor)
-    #
-    #     self.zoom_in_act.setEnabled(self.scale_factor < 3.0)
-    #     self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
-
-    @staticmethod
-    def adjust_scroll_bar(scroll_bar, factor):
-        scroll_bar.setValue(int(factor * scroll_bar.value()
-                                + ((factor - 1) * scroll_bar.pageStep() / 2)))

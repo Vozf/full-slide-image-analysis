@@ -4,6 +4,7 @@ from slide_analysis.UI.view import ImageViewer
 from slide_analysis.UI.model import Model
 from slide_analysis.UI.controller.constants import *
 
+
 class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
@@ -24,3 +25,7 @@ class Controller:
 
     def get_descriptors(self):
         return self.model.descriptors
+
+    def find_similar(self):
+        coordinates = self.image_viewer.user_selected_coordinates
+

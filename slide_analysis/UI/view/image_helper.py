@@ -22,7 +22,7 @@ class ImageHelper:
         print(self.image_dimensions)
         self.print_status()
 
-    def get_tile_coodinates(self, mouse_pos_point, scroll_area_coordinates):
+    def get_tile_coordinates(self, mouse_pos_point, scroll_area_coordinates):
         # scroll_area_coordinates = self.scrollArea.geometry()
         actual_coordianates_x = (mouse_pos_point.x() - scroll_area_coordinates.x()) * self.current_window_size[
             0] // scroll_area_coordinates.width() * pow(2, self.current_level) + self.current_coordinates[0]
