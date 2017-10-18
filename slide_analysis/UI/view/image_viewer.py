@@ -242,6 +242,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         self.menuBar().addMenu(self.file_menu)
         self.menuBar().addMenu(self.view_menu)
+        self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
         self.menuBar().addMenu(self.descriptor_menu)
