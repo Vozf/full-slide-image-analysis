@@ -1,1 +1,0 @@
-from slide_analysis.initialize_base_service.init_base_service import InitBaseService

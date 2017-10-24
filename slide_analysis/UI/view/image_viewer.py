@@ -229,7 +229,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         descriptors = self.controller.get_descriptors()
 
-        descriptors_action = list(map(lambda x: QAction(x.get_name()), descriptors))
+        descriptors_action = list(map(lambda x: QAction(x.__name__), descriptors))
 
         for i in range(len(descriptors_action)):
             descriptors_action[i].triggered.connect(self.controller.calculate_descriptors_idx(i))
