@@ -1,17 +1,15 @@
-from slide_analysis.descriptors.descriptor_class import Descriptor
+import numpy
+from slide_analysis.descriptors.constants import *
 
 
-class HistogramDescriptor(Descriptor):
-    def __init__(self, tile, scheme):
-        Descriptor.__init__(self, tile)
-        self.scheme = scheme
-        (self.r_mod, self.g_mod, self.b_mod) = self.scheme
+class HistogramDescriptor:
+    def __init__(self, scheme, tile):
+        (self.r_mod, self.g_mod, self.b_mod) = scheme
+        self.tile = tile
 
-    def rgb_use_scheme(self, rgb):
-        (r, g, b) = rgb
-        res = r >> (8 - self.r_mod) << (8 - self.r_mod)\
-                    + g >> (8 - self.g_mod) << (8 - self.g_mod - self.r_mod)\
-                    + b >> (8 - self.b_mod)
-
-    def _calc(self):
-        tile = self.tile
+    def calc(self):
+        arr = numpy.array(self.tile.data)
+        self.value = numpy.histogram((arr[:, 0] >> (8 - self.r_mod) << (8 - self.r_mod))
+                                     + (arr[:, 1] >> (8 - self.b_mod) << self.g_mod)
+                                     + (arr[:, 2] >> (8 - self.g_mod)),
+                                     bins=numpy.arange(0, COLOR_RANGE))[0]
