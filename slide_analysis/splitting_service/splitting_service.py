@@ -4,14 +4,16 @@ from slide_analysis.utils.tile_stream_class import TileStream
 
 import openslide
 
+
 class SplittingService:
     def __init__(self):
         self.tile_width = BASE_TILE_WIDTH
         self.tile_height = BASE_TILE_HEIGHT
         self.step = BASE_STEP
 
-    def _open_image(self, filename):
-        self.slide = openslide.open_slide(filename)
+    def _open_image(self, path):
+        self.path = path
+        self.slide = openslide.open_slide(path)
         (self.width, self.height) = self.slide.level_dimensions[0]
         self.num_rows = int(self.height / self.step)
         self.num_cols = int(self.width / self.step)
@@ -33,6 +35,9 @@ class SplittingService:
         params = self._get_params_for_cut(index)
         return self._cut_tile_by_coord(params[0], params[1])
 
-    def split_to_tiles(self, filename):
-        self._open_image(filename)
-        return TileStream(self._cut_tile, self.num_rows * self.num_cols)
+    def split_to_tiles(self, path):
+        self._open_image(path)
+        return TileStream(self)
+
+    def __len__(self):
+        return self.num_rows * self.num_cols
