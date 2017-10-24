@@ -12,6 +12,6 @@ class Model:
         split = SplittingService()
         stream = split.split_to_tiles(filepath)
 
-        descriptor_database_serice =\
+        descriptor_database_service =\
             DescriptorDatabaseWriteService(self.descriptors[idx], self.params[idx], directory_path)
-        descriptor_database_serice.create(stream)
+        descriptor_database_service.create(stream)
