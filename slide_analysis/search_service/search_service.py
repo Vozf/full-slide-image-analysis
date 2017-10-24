@@ -1,34 +1,41 @@
-import openslide
-
-import slide_analysis.splitting_service.constants as constants
-from slide_analysis.utils.tile_class import Tile
+from slide_analysis.descriptor_database_service.descriptor_database_read_service_class import \
+    DescriptorDatabaseReadService
+from slide_analysis.search_service.top_n_list_class import TopNList
 
 
 class SearchService:
-    def __init__(self, descriptors):
-        self.tiles = tiles
-        self.tile_width = constants.BASE_TILE_WIDTH
-        self.tile_height = constants.BASE_TILE_HEIGHT
+    def __init__(self, desc_path):
+        ddrs = DescriptorDatabaseReadService(desc_path)
+        self.tile_descriptor_class = ddrs.descriptor_class(ddrs.descriptor_params)
+        self.stream = ddrs.get_descriptor_stream()
+        self.info_obj = self.stream.next()
 
-    def _open_image(self, filename):
-        slide = openslide.open_slide(filename)
-        (self.width, self.height) = slide.dimensions
-        img = slide.read_region((0, 0), 0, (self.width, self.height))
-        self.img_data = img.getdata()
+    def search(self, tile, n, similarity_class, similarity_class_params):
+        top_n = TopNList(n)
+        tile_descriptor = self.tile_descriptor_class.calc(tile)
+        tile_similarity = similarity_class(similarity_class_params)
 
-    def _cut_tile(self, x_coord, y_coord):
-        return Tile(x_coord, y_coord, self.tile_width, self.tile_height,
-                    [[self.img_data[x_coord + self.width * y_index + x_index]
-                      for x_index in range(0, self.tile_width)]
-                     for y_index in range(y_coord, y_coord + self.tile_height)])
+        self.stream.for_each(
+            lambda descriptor: top_n.update(
+                element=(tile_similarity.compare(tile_descriptor, descriptor),
+                         self.stream.iteration)))
 
-    def split_to_tiles(self, filename):
-        self._open_image(filename)
+        # todo: convert tile idxs to actual tiles
 
-        # dimensions of resulting array of tiles
-        num_rows = int(self.height / self.tile_height)
-        num_cols = int(self.width / self.tile_width)
+        return top_n
 
-        return [[self._cut_tile(self.tile_width * col, self.tile_height * row)
-                 for col in range(0, num_cols)]
-                for row in range(0, num_rows)]
+
+if __name__ == '__main__':
+    ss = SearchService(
+        '../descriptor_apply_service/CMU-1-Small-Region/HistogramDescriptor/(3, 2, 3).bin')
+
+    from slide_analysis.utils.tile_class import Tile
+    from slide_analysis.similarities.euclidean_similarity_class import EuclideanSimilarity
+    import openslide
+
+    top = ss.search(Tile(1145, 1004, 256, 256, openslide.open_slide(
+        '../descriptor_apply_service/CMU-1-Small-Region/CMU-1-Small-Region.svs').read_region(
+        (1145, 1004), 0,
+        (256, 256)).getdata()), 7, EuclideanSimilarity, 0)
+
+    print(top)
