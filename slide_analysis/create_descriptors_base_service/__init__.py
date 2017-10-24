@@ -1,1 +1,0 @@
-from slide_analysis.create_descriptors_base_service.create_descriptors_base_service import CreateDescriptorsBaseService
