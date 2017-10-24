@@ -3,7 +3,6 @@ class TileStream:
         self.iteration = 0
         self.length = length
         self.iter_func = func
-        return
 
     def next(self):
         res = self.iter_func(self.iteration)
