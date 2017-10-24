@@ -1,7 +1,6 @@
 from slide_analysis.splitting_service.constants import *
 from slide_analysis.utils import Tile
 from slide_analysis.utils.tile_stream_class import TileStream
-import openslide
 
 import openslide
 
