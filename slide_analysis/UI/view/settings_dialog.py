@@ -9,6 +9,14 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         super(QDialog, self).__init__()
         self.setupUi(self)
         self.init_buttons()
+        self.similar_images_count_slider.valueChanged.connect(self.slider_position_changed)
+        self.current_slider_value = 0
+        self.current_descriptor = None
+        self.current_metrics = None
+
+    def slider_position_changed(self):
+        self.current_slider_value = self.similar_images_count_slider.value()
+        self.similar_images_count_label.setText(self.current_slider_value.__str__())
 
     def show_dialog(self):
         self.show()
