@@ -24,18 +24,3 @@ class SearchService:
 
         return top_n
 
-
-if __name__ == '__main__':
-    ss = SearchService(
-        '../descriptor_apply_service/CMU-1-Small-Region/HistogramDescriptor/(3, 2, 3).bin')
-
-    from slide_analysis.utils.tile_class import Tile
-    from slide_analysis.similarities.euclidean_similarity_class import EuclideanSimilarity
-    import openslide
-
-    top = ss.search(Tile(1145, 1004, 256, 256, openslide.open_slide(
-        '../descriptor_apply_service/CMU-1-Small-Region/CMU-1-Small-Region.svs').read_region(
-        (1145, 1004), 0,
-        (256, 256)).getdata()), 7, EuclideanSimilarity, 0)
-
-    print(top)
