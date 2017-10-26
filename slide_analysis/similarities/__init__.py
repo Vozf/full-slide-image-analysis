@@ -1,0 +1,3 @@
+from slide_analysis.similarities.euclidean_similarity_class import EuclideanSimilarity
+all_similarities = [EuclideanSimilarity]
+
