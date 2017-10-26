@@ -1,4 +1,5 @@
 from slide_analysis.utils.tile_class import Tile
 from slide_analysis.utils.descriptor_stream_class import DescriptorStream
+from slide_analysis.utils.descriptor_dump_class import DescriptorDump
 from slide_analysis.utils.functions import compose
 from slide_analysis.utils.functions import get_descriptor_class_by_name

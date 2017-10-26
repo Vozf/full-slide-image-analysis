@@ -16,9 +16,9 @@ class SearchService:
         tile_similarity = similarity_class(similarity_class_params)
 
         self.stream.for_each(
-            lambda descriptor: top_n.update(
-                element=(tile_similarity.compare(tile_descriptor, descriptor),
-                         self.stream.iteration)))
+            lambda descriptor_dump: top_n.update(
+                element=(tile_similarity.compare(tile_descriptor, descriptor_dump.descriptor),
+                         descriptor_dump)))
 
         # todo: convert tile idxs to actual tiles
 

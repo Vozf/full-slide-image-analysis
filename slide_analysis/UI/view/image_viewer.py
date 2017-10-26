@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import *
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
 from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
-from slide_analysis.UI.view.constants import SIMILAR_TILE_SIZE
+from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
@@ -23,6 +23,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         self.image_helper = None
         self.user_selected_coordinates = None
+        self.user_selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
         self.setupUi(self)
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
@@ -57,10 +58,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.user_selected_coordinates = self.image_helper\
             .get_tile_coordinates(q_mouse_event.pos(), self.scrollArea.geometry())
 
-        tile = self.image_helper.get_tile_from_coordinates(self.user_selected_coordinates)
-        self.image_popup_widget = TilePreviewPopup(tile)
+        image_qt = self.image_helper.get_qt_from_coordinates(self.user_selected_coordinates)
+        self.image_popup_widget = TilePreviewPopup(image_qt, self.controller)
         self.image_popup_widget.show()
-        self.show_top_n([tile])
+        self.show_top_n([image_qt])
 
     def mouseReleaseEvent(self, q_mouse_event):
         if not self.is_image_popup_shown():
@@ -75,7 +76,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         for tile in tiles:
             label = QLabel()
             pixmap = QPixmap.fromImage(tile)
-            pixmap = pixmap.scaled(SIMILAR_TILE_SIZE[0], SIMILAR_TILE_SIZE[1], Qt.KeepAspectRatio)
+            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatio)
             label.setPixmap(pixmap)
             self.imageVerticalLayout.addWidget(label)
 
