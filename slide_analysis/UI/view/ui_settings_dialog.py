@@ -8,13 +8,15 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(400, 300)
-        self.gridLayout = QtWidgets.QGridLayout(Dialog)
+class Ui_SettingsDialog(object):
+    def setupUi(self, SettingsDialog):
+        SettingsDialog.setObjectName("SettingsDialog")
+        SettingsDialog.resize(427, 336)
+        self.gridLayout = QtWidgets.QGridLayout(SettingsDialog)
         self.gridLayout.setObjectName("gridLayout")
-        self.settings_tab_widget = QtWidgets.QTabWidget(Dialog)
+        self.settings_tab_widget = QtWidgets.QTabWidget(SettingsDialog)
+        self.settings_tab_widget.setTabPosition(QtWidgets.QTabWidget.North)
+        self.settings_tab_widget.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.settings_tab_widget.setObjectName("settings_tab_widget")
         self.descriptor_settings_tab = QtWidgets.QWidget()
         self.descriptor_settings_tab.setObjectName("descriptor_settings_tab")
@@ -82,19 +84,32 @@ class Ui_Dialog(object):
         self.verticalLayout_2.addItem(spacerItem5)
         self.settings_tab_widget.addTab(self.metrics_settings, "")
         self.gridLayout.addWidget(self.settings_tab_widget, 1, 0, 1, 1)
+        self.settings_conformation_buttons = QtWidgets.QDialogButtonBox(SettingsDialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.settings_conformation_buttons.sizePolicy().hasHeightForWidth())
+        self.settings_conformation_buttons.setSizePolicy(sizePolicy)
+        self.settings_conformation_buttons.setLayoutDirection(QtCore.Qt.RightToLeft)
+        self.settings_conformation_buttons.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
+        self.settings_conformation_buttons.setOrientation(QtCore.Qt.Horizontal)
+        self.settings_conformation_buttons.setStandardButtons(QtWidgets.QDialogButtonBox.Apply|QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.settings_conformation_buttons.setCenterButtons(False)
+        self.settings_conformation_buttons.setObjectName("settings_conformation_buttons")
+        self.gridLayout.addWidget(self.settings_conformation_buttons, 2, 0, 1, 1)
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(SettingsDialog)
         self.settings_tab_widget.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        QtCore.QMetaObject.connectSlotsByName(SettingsDialog)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, SettingsDialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.choose_descriptors_label.setText(_translate("Dialog", "Choose method for calculating descroptors"))
-        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.descriptor_settings_tab), _translate("Dialog", "Descriptors"))
-        self.search_settings_label.setText(_translate("Dialog", "How many similar images to display"))
-        self.similar_images_count_label.setText(_translate("Dialog", "0"))
-        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.similar_images_settings_tab), _translate("Dialog", "Similar images"))
-        self.choose_descriptors_label_2.setText(_translate("Dialog", "Choose metrics"))
-        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.metrics_settings), _translate("Dialog", "Metrics"))
+        SettingsDialog.setWindowTitle(_translate("SettingsDialog", "Dialog"))
+        self.choose_descriptors_label.setText(_translate("SettingsDialog", "Choose method for calculating descriptors"))
+        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.descriptor_settings_tab), _translate("SettingsDialog", "Descriptors"))
+        self.search_settings_label.setText(_translate("SettingsDialog", "How many similar images to display"))
+        self.similar_images_count_label.setText(_translate("SettingsDialog", "0"))
+        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.similar_images_settings_tab), _translate("SettingsDialog", "Similar images"))
+        self.choose_descriptors_label_2.setText(_translate("SettingsDialog", "Choose metrics"))
+        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.metrics_settings), _translate("SettingsDialog", "Metrics"))
 

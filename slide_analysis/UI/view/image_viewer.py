@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.view.image_helper import ImageHelper
+from slide_analysis.UI.view.settings_dialog import SettingsDialog
 from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
 from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
 from slide_analysis.UI.view.constants import SIMILAR_TILE_SIZE
@@ -28,7 +29,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
         self.topImagesScrollArea.setWidgetResizable(True)
         self.image_popup_widget = None
+        self.settings_dialog = SettingsDialog()
         self.show()
+
 
         self.scale_factor = 0.0
 
@@ -236,12 +239,17 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         self.descriptors = descriptors_action
 
+        self.settings_act = QAction("Settings")
+        self.settings_act.triggered.connect(self.settings_dialog.show)
+
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
         self.file_menu = QMenu("&File", self)
         self.file_menu.addAction(self.open_act)
         self.file_menu.addSeparator()
         self.file_menu.addAction(self.exit_act)
+        self.file_menu.addSeparator()
+        self.file_menu.addAction(self.settings_act)
 
         self.view_menu = QMenu("&View", self)
         self.view_menu.addAction(self.zoom_in_act)
@@ -259,6 +267,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.descriptor_menu = QMenu("&Descriptors", self)
         for desc in self.descriptors:
             self.descriptor_menu.addAction(desc)
+
+        # self.settings_menu = QMenu("&Settings", self)
+        # self.settings_menu.addAction(self.settings_act)
 
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)
