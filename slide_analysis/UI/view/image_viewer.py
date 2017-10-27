@@ -30,7 +30,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
         self.topImagesScrollArea.setWidgetResizable(True)
         self.image_popup_widget = None
-        self.settings_dialog = SettingsDialog()
+        self.settings_dialog = None
         self.show()
 
 
@@ -241,7 +241,12 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.descriptors = descriptors_action
 
         self.settings_act = QAction("Settings")
-        self.settings_act.triggered.connect(self.settings_dialog.show)
+        self.settings_act.triggered.connect(self.show_settings)
+
+    def show_settings(self):
+        if self.settings_dialog is None:
+            self.settings_dialog = SettingsDialog(self.controller)
+        self.settings_dialog.show()
 
     # noinspection PyAttributeOutsideInit
     def create_menus(self):

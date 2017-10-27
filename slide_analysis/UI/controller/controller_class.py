@@ -1,3 +1,4 @@
+from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
 
 from slide_analysis.UI.view import ImageViewer
@@ -12,15 +13,23 @@ class Controller:
         self.model = Model()
         self.image_viewer = ImageViewer(self, self.model)
         self.app.installEventFilter(self.image_viewer)
-        self.chosen_descriptor_idx = 1
-        self.descriptor_params = (3, 2, 3)
-        self.chosen_similarity_idx = 0
-        self.similarity_params = None
-        self.chosen_n = 10
+        self.settings = QSettings("grad", "slide_analysis")
+        self.chosen_descriptor_idx = self.settings.value(CHOSEN_DESCRIPTOR, 1)
+        self.descriptor_params = self.settings.value(DESCRIPTOR_PARAMS, (3, 2, 3))
+        self.chosen_similarity_idx = self.settings.value(CHOSEN_SIMILARITY, 0)
+        self.similarity_params = self.settings.value(SIMILARITY_PARAMS, None)
+        self.chosen_n = self.settings.value(CHOSEN_N, 10)
+
+    def get_chosen_n(self):
+        return self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
 
     def run(self):
         self.image_viewer.show()
         return self.app.exec_()
+
+    def settings_changed(self, settings_new_state):
+        for k, v in settings_new_state.items():
+            self.settings.setValue(k, v)
 
     def calculate_descriptors_idx(self, idx):
         def calculate_descriptor():
@@ -42,7 +51,7 @@ class Controller:
         imagepath = self.image_viewer.image_helper.filename
 
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
-        top_n = self.model.find_similar(desc_path, tile, self.chosen_n,
+        top_n = self.model.find_similar(desc_path, tile, self.get_chosen_n(),
                                         self.chosen_similarity_idx, self.similarity_params)
         qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates((tup[1].x, tup[1].y)), top_n))
 

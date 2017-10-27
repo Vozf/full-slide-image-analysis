@@ -2,7 +2,7 @@ import openslide
 from PIL import ImageQt
 
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
-from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR
+from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 
 class ImageHelper:
