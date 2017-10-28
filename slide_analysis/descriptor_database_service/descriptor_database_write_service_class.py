@@ -17,6 +17,7 @@ class DescriptorDatabaseWriteService:
     def _dump_obj(file, obj):
         return pickle.dump(obj, file)
 
+    #todo move making of descr_filename somewhere else, so it can be accessed and modified
     def create(self, tile_stream):
         image_path = tile_stream.splitting_service.path
         length = len(tile_stream)

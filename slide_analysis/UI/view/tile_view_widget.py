@@ -15,9 +15,9 @@ class TilePreviewPopup(QLabel):
         self.resize(pixmap.width(), pixmap.height())
         position = self.cursor().pos()
         self.move(position)
-        self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
-                            | Qt.FramelessWindowHint
-                            | Qt.X11BypassWindowManagerHint)
+        # self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
+        #                     | Qt.FramelessWindowHint
+        #                     | Qt.X11BypassWindowManagerHint)
 
     # def leaveEvent(self, event):
     #     """ When the mouse leave this widget, destroy it. """

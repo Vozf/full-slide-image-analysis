@@ -1,3 +1,4 @@
+import os
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
 
@@ -12,16 +13,26 @@ class Controller:
         self.app = QApplication(argv)
         self.model = Model()
         self.image_viewer = ImageViewer(self, self.model)
+
         self.app.installEventFilter(self.image_viewer)
         self.settings = QSettings("grad", "slide_analysis")
-        self.chosen_descriptor_idx = self.settings.value(CHOSEN_DESCRIPTOR, 1)
+        self.chosen_descriptor_idx = self.settings.value(CHOSEN_DESCRIPTOR_IDX, 1)
         self.descriptor_params = self.settings.value(DESCRIPTOR_PARAMS, (3, 2, 3))
         self.chosen_similarity_idx = self.settings.value(CHOSEN_SIMILARITY, 0)
         self.similarity_params = self.settings.value(SIMILARITY_PARAMS, None)
-        self.chosen_n = self.settings.value(CHOSEN_N, 10)
 
     def get_chosen_n(self):
         return self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
+
+    def get_chosen_descriptor_idx(self):
+        return self.settings.value(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE, type=int)
+
+    def get_chosen_descriptor_name(self):
+        return self.get_descriptors()[self.get_chosen_descriptor_idx()].__name__
+
+    # def get_fullslide_image_descriptor_directory_path(self):
+    #     filename = self.image_viewer.image_helper.filename
+    #     return filename[0:filename.find('.')].replace('/', ' ')
 
     def run(self):
         self.image_viewer.show()
@@ -47,7 +58,9 @@ class Controller:
     def find_similar(self):
         coordinates = self.image_viewer.user_selected_coordinates
         dimensions = self.image_viewer.user_selected_dimensions
-        desc_path = DESCRIPTOR_DIRECTORY_PATH + "/CMU-1-Small-Region/HistogramDescriptor/(3, 2, 3).bin"
+        # todo generalise using get_fullslide_image_filename()
+        current_descriptor = self.get_chosen_descriptor_name()
+        desc_path = DESCRIPTOR_DIRECTORY_PATH + '/' + self.get_fullslide_image_filename() + '/' + current_descriptor + "/(3, 2, 3).bin"
         imagepath = self.image_viewer.image_helper.filename
 
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)

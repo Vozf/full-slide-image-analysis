@@ -18,6 +18,11 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         # self.set_current_settings()
         self.current_settings = {}
         self.update_slider()
+        self.init_combo_boxes()
+
+    def init_combo_boxes(self):
+        self.choose_descriptors_combo_box.addItems(map(lambda x: x.__name__, self.controller.get_descriptors()))
+        self.choose_metrics_combo_box.addItems(map(lambda x: x.__name__, self.controller.get_similarities()))
 
     def update_slider(self):
         self.similar_images_count_slider.setValue(self.current_slider_value)

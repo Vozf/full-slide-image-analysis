@@ -33,7 +33,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.settings_dialog = None
         self.show()
 
-
         self.scale_factor = 0.0
 
         self.imageLabel.setBackgroundRole(QPalette.Base)
@@ -90,10 +89,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         return self.image_popup_widget is not None
 
     def open(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
-        print(filename)
-        if filename:
-            self.image_helper = ImageHelper(filename)
+        filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
+        print(filepath)
+        if filepath:
+            self.image_helper = ImageHelper(filepath)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def get_scaled_pixmap(self, q_image):
