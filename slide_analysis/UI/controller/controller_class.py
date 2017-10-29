@@ -61,9 +61,9 @@ class Controller:
         # todo generalise using get_fullslide_image_filename()
         current_descriptor = self.get_chosen_descriptor_name()
         desc_path = DESCRIPTOR_DIRECTORY_PATH + '/' + self.get_fullslide_image_filename() + '/' + current_descriptor + "/(3, 2, 3).bin"
-        imagepath = self.image_viewer.image_helper.filename
+        image_path = self.image_viewer.image_helper.filename
 
-        tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
+        tile = get_tile_from_coordinates(image_path, *coordinates, *dimensions)
         top_n = self.model.find_similar(desc_path, tile, self.get_chosen_n(),
                                         self.chosen_similarity_idx, self.similarity_params)
         qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates((tup[1].x, tup[1].y)), top_n))
