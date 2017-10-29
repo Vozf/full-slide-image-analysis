@@ -26,6 +26,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.user_selected_coordinates = None
         self.user_selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
         self.setupUi(self)
+        self.fullSlideImageGraphicsScene = QGraphicsScene()
+        self.fullSlideImageGraphicsView.setScene(self.fullSlideImageGraphicsScene)
+
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
         self.topImagesScrollArea.setWidgetResizable(True)
@@ -35,9 +38,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         self.scale_factor = 0.0
 
-        self.imageLabel.setBackgroundRole(QPalette.Base)
-        # self.imageLabel.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        # self.imageLabel.setScaledContents(True)
+        self.fullSlideImageGraphicsView.setBackgroundRole(QPalette.Base)
+        # self.fullSlideImageGraphicsView.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        # self.fullSlideImageGraphicsView.setScaledContents(True)
 
         self.create_actions()
         self.create_menus()
@@ -51,25 +54,25 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     def resizeEvent(self, event):
         if not self.is_image_opened():
             return
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+        self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
-    def mousePressEvent(self, q_mouse_event):
-        if not self.is_image_opened():
-            return
-
-        self.user_selected_coordinates = self.image_helper\
-            .get_tile_coordinates(q_mouse_event.pos(), self.scrollArea.geometry())
-
-        image_qt = self.image_helper.get_qt_from_coordinates(self.user_selected_coordinates)
-        self.image_popup_widget = TilePreviewPopup(image_qt, self.controller)
-        self.image_popup_widget.show()
-        self.show_top_n([image_qt])
-
-    def mouseReleaseEvent(self, q_mouse_event):
-        if not self.is_image_popup_shown():
-            return
-        self.image_popup_widget.close()
-        q_mouse_event.accept()
+    # def mousePressEvent(self, q_mouse_event):
+    #     if not self.is_image_opened():
+    #         return
+    #
+    #     self.user_selected_coordinates = self.image_helper\
+    #         .get_tile_coordinates(q_mouse_event.pos(), self.scrollArea.geometry())
+    #
+    #     image_qt = self.image_helper.get_qt_from_coordinates(self.user_selected_coordinates)
+    #     self.image_popup_widget = TilePreviewPopup(image_qt, self.controller)
+    #     self.image_popup_widget.show()
+    #     self.show_top_n([image_qt])
+    #
+    # def mouseReleaseEvent(self, q_mouse_event):
+    #     if not self.is_image_popup_shown():
+    #         return
+    #     self.image_popup_widget.close()
+    #     q_mouse_event.accept()
 
     def show_top_n(self, tiles):
         for i in reversed(range(self.imageVerticalLayout.count())):
@@ -92,54 +95,58 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         print(filepath)
         if filepath:
+            self.fullSlideImageGraphicsScene.clear()
             self.image_helper = ImageHelper(filepath)
-            self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+            self.fullSlideImageGraphicsScene.addPixmap(self.get_pixmap(self.image_helper.get_q_image()))
 
-    def get_scaled_pixmap(self, q_image):
-        pixmap = QPixmap.fromImage(q_image)
-        print('Scroll area size: ', self.scrollArea.size())
-        return pixmap.scaled(self.scrollArea.width() - 20, self.scrollArea.height() - 20, Qt.IgnoreAspectRatio)
+    def get_pixmap(self, q_image):
+        return QPixmap.fromImage(q_image)
 
-    def zoom_in(self):
-        if not self.is_image_opened():
-            return
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
-
-    def zoom_out(self):
-        if not self.is_image_opened():
-            return
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
-
-    def move_right(self):
-        if not self.is_image_opened():
-            return
-        self.image_helper.move_right()
-        # print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
-    def move_left(self):
-        if not self.is_image_opened():
-            return
-        self.image_helper.move_left()
-        # print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
-    def move_up(self):
-        if not self.is_image_opened():
-            return
-        self.image_helper.move_up()
-        # print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
-    def move_down(self):
-        if not self.is_image_opened():
-            return
-        self.image_helper.move_down()
-        # print(self.imageLabel.size())
-        self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
-    def normal_size(self):
-        self.imageLabel.adjustSize()
+    # def get_scaled_pixmap(self, q_image):
+    #     pixmap = QPixmap.fromImage(q_image)
+    #     print('Scroll area size: ', self.scrollArea.size())
+    #     return pixmap.scaled(self.scrollArea.width() - 20, self.scrollArea.height() - 20, Qt.IgnoreAspectRatio)
+    #
+    # def zoom_in(self):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
+    #
+    # def zoom_out(self):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
+    #
+    # def move_right(self):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.image_helper.move_right()
+    #     # print(self.fullSlideImageGraphicsView.size())
+    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #
+    # def move_left(self):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.image_helper.move_left()
+    #     # print(self.fullSlideImageGraphicsView.size())
+    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #
+    # def move_up(self):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.image_helper.move_up()
+    #     # print(self.fullSlideImageGraphicsView.size())
+    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #
+    # def move_down(self):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.image_helper.move_down()
+    #     # print(self.fullSlideImageGraphicsView.size())
+    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #
+    # def normal_size(self):
+    #     self.fullSlideImageGraphicsView.adjustSize()
 
     # def fit_to_window(self):
     #     fitToWindow = self.fit_to_window_act.isChecked()
@@ -177,26 +184,26 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.exit_act.setShortcut("Ctrl+Q")
         self.exit_act.triggered.connect(self.close)
 
-        self.zoom_in_act = QAction("Zoom &In", self)
-        # , shortcut="Ctrl++",
-        # enabled=False, triggered=self.zoomIn)
-        # self.zoom_in_act.setEnabled(False)
-        self.zoom_in_act.setShortcut("Ctrl++")
-        self.zoom_in_act.triggered.connect(self.zoom_in)
-
-        self.zoom_out_act = QAction("Zoom &Out", self)
-        # , shortcut="Ctrl+-",
-        # enabled=False, triggered=self.zoomOut)
-        # self.zoom_out_act.setEnabled(False)
-        self.zoom_out_act.setShortcut("Ctrl+-")
-        self.zoom_out_act.triggered.connect(self.zoom_out)
-
-        self.normal_size_act = QAction("&Normal Size", self)
-        # , shortcut="Ctrl+S",
-        # enabled=False, triggered=self.normalSize)
-        self.normal_size_act.setShortcut("Ctrl+S")
-        # self.normal_size_act.setEnabled(False)
-        self.normal_size_act.triggered.connect(self.normal_size)
+        # self.zoom_in_act = QAction("Zoom &In", self)
+        # # , shortcut="Ctrl++",
+        # # enabled=False, triggered=self.zoomIn)
+        # # self.zoom_in_act.setEnabled(False)
+        # self.zoom_in_act.setShortcut("Ctrl++")
+        # self.zoom_in_act.triggered.connect(self.zoom_in)
+        #
+        # self.zoom_out_act = QAction("Zoom &Out", self)
+        # # , shortcut="Ctrl+-",
+        # # enabled=False, triggered=self.zoomOut)
+        # # self.zoom_out_act.setEnabled(False)
+        # self.zoom_out_act.setShortcut("Ctrl+-")
+        # self.zoom_out_act.triggered.connect(self.zoom_out)
+        #
+        # self.normal_size_act = QAction("&Normal Size", self)
+        # # , shortcut="Ctrl+S",
+        # # enabled=False, triggered=self.normalSize)
+        # self.normal_size_act.setShortcut("Ctrl+S")
+        # # self.normal_size_act.setEnabled(False)
+        # self.normal_size_act.triggered.connect(self.normal_size)
 
         # self.fit_to_window_act = QAction("&Fit to Window", self)
         # # , enabled=False,
@@ -214,21 +221,21 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         # , triggered=QApplication.instance().aboutQt)
         self.about_qt_act.triggered.connect(QApplication.instance().aboutQt)
 
-        self.move_right_act = QAction("&Move right", self)
-        self.move_right_act.setShortcut("Right")
-        self.move_right_act.triggered.connect(self.move_right)
-
-        self.move_left_act = QAction("&Move left", self)
-        self.move_left_act.setShortcut("Left")
-        self.move_left_act.triggered.connect(self.move_left)
-
-        self.move_up_act = QAction("&Move up", self)
-        self.move_up_act.setShortcut("Up")
-        self.move_up_act.triggered.connect(self.move_up)
-
-        self.move_down_act = QAction("&Move down", self)
-        self.move_down_act.setShortcut("Down")
-        self.move_down_act.triggered.connect(self.move_down)
+        # self.move_right_act = QAction("&Move right", self)
+        # self.move_right_act.setShortcut("Right")
+        # self.move_right_act.triggered.connect(self.move_right)
+        #
+        # self.move_left_act = QAction("&Move left", self)
+        # self.move_left_act.setShortcut("Left")
+        # self.move_left_act.triggered.connect(self.move_left)
+        #
+        # self.move_up_act = QAction("&Move up", self)
+        # self.move_up_act.setShortcut("Up")
+        # self.move_up_act.triggered.connect(self.move_up)
+        #
+        # self.move_down_act = QAction("&Move down", self)
+        # self.move_down_act.setShortcut("Down")
+        # self.move_down_act.triggered.connect(self.move_down)
 
         descriptors = self.controller.get_descriptors()
 
@@ -256,18 +263,18 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.file_menu.addSeparator()
         self.file_menu.addAction(self.settings_act)
 
-        self.view_menu = QMenu("&View", self)
-        self.view_menu.addAction(self.zoom_in_act)
-        self.view_menu.addAction(self.zoom_out_act)
-        self.view_menu.addAction(self.normal_size_act)
-        self.view_menu.addSeparator()
-        # self.view_menu.addAction(self.fit_to_window_act)
-
-        self.navigation_menu = QMenu("&Navigation", self)
-        self.navigation_menu.addAction(self.move_right_act)
-        self.navigation_menu.addAction(self.move_left_act)
-        self.navigation_menu.addAction(self.move_down_act)
-        self.navigation_menu.addAction(self.move_up_act)
+        # self.view_menu = QMenu("&View", self)
+        # self.view_menu.addAction(self.zoom_in_act)
+        # self.view_menu.addAction(self.zoom_out_act)
+        # self.view_menu.addAction(self.normal_size_act)
+        # self.view_menu.addSeparator()
+        # # self.view_menu.addAction(self.fit_to_window_act)
+        #
+        # self.navigation_menu = QMenu("&Navigation", self)
+        # self.navigation_menu.addAction(self.move_right_act)
+        # self.navigation_menu.addAction(self.move_left_act)
+        # self.navigation_menu.addAction(self.move_down_act)
+        # self.navigation_menu.addAction(self.move_up_act)
 
         self.descriptor_menu = QMenu("&Descriptors", self)
         for desc in self.descriptors:
@@ -281,7 +288,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.help_menu.addAction(self.about_qt_act)
 
         self.menuBar().addMenu(self.file_menu)
-        self.menuBar().addMenu(self.view_menu)
+        # self.menuBar().addMenu(self.view_menu)
+        # self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.descriptor_menu)
-        self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
