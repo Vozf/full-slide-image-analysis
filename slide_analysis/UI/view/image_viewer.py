@@ -9,6 +9,7 @@ from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import *
 
+from slide_analysis.UI.view.fullslide_viewer import FullslideViewer
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
 from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
@@ -22,12 +23,12 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.model = model
         self.controller = controller
 
-        self.image_helper = None
+        # self.image_helper = None
         self.user_selected_coordinates = None
         self.user_selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
         self.setupUi(self)
-        self.fullSlideImageGraphicsScene = QGraphicsScene()
-        self.fullSlideImageGraphicsView.setScene(self.fullSlideImageGraphicsScene)
+        self.fullslide_viewer = FullslideViewer(self)
+        self.fullslideImageLayout.addWidget(self.fullslide_viewer)
 
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
@@ -38,9 +39,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
         self.scale_factor = 0.0
 
-        self.fullSlideImageGraphicsView.setBackgroundRole(QPalette.Base)
-        # self.fullSlideImageGraphicsView.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-        # self.fullSlideImageGraphicsView.setScaledContents(True)
+        # self.fullslide_viewer.setBackgroundRole(QPalette.Base)
+        # self.fullslide_viewer.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
+        # self.fullslide_viewer.setScaledContents(True)
 
         self.create_actions()
         self.create_menus()
@@ -51,10 +52,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
                 self.image_popup_widget.close()
         return QMainWindow.eventFilter(self, source, event)
 
-    def resizeEvent(self, event):
-        if not self.is_image_opened():
-            return
-        self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    # def resizeEvent(self, event):
+    #     if not self.is_image_opened():
+    #         return
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     # def mousePressEvent(self, q_mouse_event):
     #     if not self.is_image_opened():
@@ -95,9 +96,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         print(filepath)
         if filepath:
-            self.fullSlideImageGraphicsScene.clear()
-            self.image_helper = ImageHelper(filepath)
-            self.fullSlideImageGraphicsScene.addPixmap(self.get_pixmap(self.image_helper.get_q_image()))
+            # self.image_helper = ImageHelper(filepath)
+            self.fullslide_viewer.set_image(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)
@@ -110,43 +110,43 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     # def zoom_in(self):
     #     if not self.is_image_opened():
     #         return
-    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_in()))
     #
     # def zoom_out(self):
     #     if not self.is_image_opened():
     #         return
-    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.zoom_out()))
     #
     # def move_right(self):
     #     if not self.is_image_opened():
     #         return
     #     self.image_helper.move_right()
-    #     # print(self.fullSlideImageGraphicsView.size())
-    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #     # print(self.fullslide_viewer.size())
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
     #
     # def move_left(self):
     #     if not self.is_image_opened():
     #         return
     #     self.image_helper.move_left()
-    #     # print(self.fullSlideImageGraphicsView.size())
-    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #     # print(self.fullslide_viewer.size())
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
     #
     # def move_up(self):
     #     if not self.is_image_opened():
     #         return
     #     self.image_helper.move_up()
-    #     # print(self.fullSlideImageGraphicsView.size())
-    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #     # print(self.fullslide_viewer.size())
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
     #
     # def move_down(self):
     #     if not self.is_image_opened():
     #         return
     #     self.image_helper.move_down()
-    #     # print(self.fullSlideImageGraphicsView.size())
-    #     self.fullSlideImageGraphicsView.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+    #     # print(self.fullslide_viewer.size())
+    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
     #
     # def normal_size(self):
-    #     self.fullSlideImageGraphicsView.adjustSize()
+    #     self.fullslide_viewer.adjustSize()
 
     # def fit_to_window(self):
     #     fitToWindow = self.fit_to_window_act.isChecked()

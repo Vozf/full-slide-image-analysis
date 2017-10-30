@@ -45,16 +45,29 @@ class ImageHelper:
                                       self.image_dimensions[1] // self.scale_factor)
         print('Current movement step:', self.current_movement_step)
 
-    def get_q_image(self):
-        self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
-                                                      self.current_window_size)
+    def get_q_image(self, viewrect=None):
+        if viewrect is not None:
+            factor = min(viewrect[0] / self.current_window_size[0],
+                         viewrect[1] / self.current_window_size[1])
+            if factor > 1.25:
+                self.move_to_next_image_level()
+                self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
+                                                          self.current_window_size)
+        if self.image is None:
+            self.image = self.openslide_image.read_region(self.current_coordinates, self.current_level,
+                                                          self.current_window_size)
         self.print_status()
         return ImageQt.ImageQt(self.image)
+    #
+    # def change_image_properties(self):
+    #     self.image = self.openslide_image.read_region(self.current_coordinates,
+    #                                                   self.current_level, self.current_window_size)
+    #     return ImageQt.ImageQt(self.image)
 
-    def change_image_properties(self):
-        self.image = self.openslide_image.read_region(self.current_coordinates,
-                                                      self.current_level, self.current_window_size)
-        return ImageQt.ImageQt(self.image)
+    def move_to_next_image_level(self):
+        if self.current_level != 0:
+            self.current_level -= 1
+            self.current_window_size = self.level_dimensions[self.current_level]
 
     # Zooming is just moving to next level of image
     def zoom_in(self):
@@ -62,30 +75,30 @@ class ImageHelper:
             self.current_level -= 1
             self.scale_factor *= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
-        return self.change_image_properties()
+        return self.get_q_image()
 
     def zoom_out(self):
         if self.current_level < self.openslide_image.level_count - 1:
             self.current_level += 1
             self.scale_factor //= SCALE_MULTIPLIER
             self.__calculate_movement_step_coordinates()
-        return self.change_image_properties()
+        return self.get_q_image()
 
-    def move_right(self):
-        self.set_coordinates(self.current_coordinates[0] + self.current_movement_step[0],
-                             self.current_coordinates[1])
-
-    def move_left(self):
-        self.set_coordinates(self.current_coordinates[0] - self.current_movement_step[0],
-                             self.current_coordinates[1])
-
-    def move_down(self):
-        self.set_coordinates(self.current_coordinates[0],
-                             self.current_coordinates[1] + self.current_movement_step[1])
-
-    def move_up(self):
-        self.set_coordinates(self.current_coordinates[0],
-                             self.current_coordinates[1] - self.current_movement_step[1])
+    # def move_right(self):
+    #     self.set_coordinates(self.current_coordinates[0] + self.current_movement_step[0],
+    #                          self.current_coordinates[1])
+    #
+    # def move_left(self):
+    #     self.set_coordinates(self.current_coordinates[0] - self.current_movement_step[0],
+    #                          self.current_coordinates[1])
+    #
+    # def move_down(self):
+    #     self.set_coordinates(self.current_coordinates[0],
+    #                          self.current_coordinates[1] + self.current_movement_step[1])
+    #
+    # def move_up(self):
+    #     self.set_coordinates(self.current_coordinates[0],
+    #                          self.current_coordinates[1] - self.current_movement_step[1])
 
     def set_coordinates(self, x, y):
         to_set_x = self.__get_correct_coordinate(x, self.image_dimensions[0],

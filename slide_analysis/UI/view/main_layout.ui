@@ -14,8 +14,8 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
      <widget class="QScrollArea" name="topImagesScrollArea">
       <property name="maximumSize">
        <size>
@@ -38,8 +38,8 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QGraphicsView" name="fullSlideImageGraphicsView"/>
+    <item>
+     <layout class="QVBoxLayout" name="fullslideImageLayout"/>
     </item>
    </layout>
   </widget>
