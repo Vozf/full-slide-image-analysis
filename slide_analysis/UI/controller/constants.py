@@ -1,1 +1,1 @@
-DESCRIPTOR_DIRECTORY_PATH = '../descriptor_apply_service'
+DESCRIPTOR_DIRECTORY_PATH = '../descriptor_dumps/'

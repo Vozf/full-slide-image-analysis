@@ -87,10 +87,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         return self.image_popup_widget is not None
 
     def open(self):
-        filename, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
-        print(filename)
-        if filename:
-            self.image_helper = ImageHelper(filename)
+        filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
+        print("filepath:", filepath)
+        if filepath:
+            self.image_helper = ImageHelper(filepath)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def get_scaled_pixmap(self, q_image):
@@ -228,14 +228,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.move_down_act.setShortcut("Down")
         self.move_down_act.triggered.connect(self.move_down)
 
-        descriptors = self.controller.get_descriptors()
-
-        descriptors_action = list(map(lambda x: QAction(x.__name__), descriptors))
-
-        for i in range(len(descriptors_action)):
-            descriptors_action[i].triggered.connect(self.controller.calculate_descriptors_idx(i))
-
-        self.descriptors = descriptors_action
+        self.calculate_descriptor_act = QAction("Calculate")
+        self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
 
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
@@ -258,8 +252,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.navigation_menu.addAction(self.move_up_act)
 
         self.descriptor_menu = QMenu("&Descriptors", self)
-        for desc in self.descriptors:
-            self.descriptor_menu.addAction(desc)
+
+        self.descriptor_menu.addAction(self.calculate_descriptor_act)
 
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)
