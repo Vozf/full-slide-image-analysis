@@ -6,8 +6,9 @@ from PyQt5.QtWidgets import QLabel
 
 
 class TilePreviewPopup(QLabel):
-    def __init__(self, tile):
+    def __init__(self, tile, controller):
         super().__init__()
+        self.controller = controller
         self.tile_label = QLabel(self)
         pixmap = QPixmap.fromImage(tile)
         self.tile_label.setPixmap(pixmap)
@@ -24,6 +25,10 @@ class TilePreviewPopup(QLabel):
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Space:
+            if self.controller.last_descriptor_database is None:
+                # todo add popup
+                print("there should be popup to select descriptor database")
+            self.controller.find_similar()
             self.close()
             event.accept()
         else:

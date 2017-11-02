@@ -1,12 +1,14 @@
 import openslide
 from PIL import ImageQt
 
-from slide_analysis.UI.constants import *
+from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
+from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR
 
 
 class ImageHelper:
-    def __init__(self, file_name):
-        self.openslide_image = openslide.OpenSlide(file_name)
+    def __init__(self, filepath):
+        self.filepath = filepath
+        self.openslide_image = openslide.OpenSlide(filepath)
         self.current_level = self.openslide_image.level_count - 1
         self.level_dimensions = self.openslide_image.level_dimensions
         self.current_coordinates = (0, 0)
@@ -21,7 +23,7 @@ class ImageHelper:
         print(self.image_dimensions)
         self.print_status()
 
-    def get_tile_coodinates(self, mouse_pos_point, scroll_area_coordinates):
+    def get_tile_coordinates(self, mouse_pos_point, scroll_area_coordinates):
         # scroll_area_coordinates = self.scrollArea.geometry()
         actual_coordianates_x = (mouse_pos_point.x() - scroll_area_coordinates.x()) * self.current_window_size[
             0] // scroll_area_coordinates.width() * pow(2, self.current_level) + self.current_coordinates[0]
@@ -35,8 +37,8 @@ class ImageHelper:
         else:
             return 0, 0
 
-    def get_tile_from_coordinates(self, tile_coordinates):
-        return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, TILE_SIZE))
+    def get_qt_from_coordinates(self, tile_coordinates):
+        return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,

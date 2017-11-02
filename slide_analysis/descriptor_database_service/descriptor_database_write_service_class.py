@@ -1,6 +1,7 @@
 import os
 import pickle
-from slide_analysis.utils import compose, get_descriptor_class_by_name
+import datetime
+from slide_analysis.utils import compose, get_descriptor_class_by_name, DescriptorDump
 
 
 class DescriptorDatabaseWriteService:
@@ -23,12 +24,12 @@ class DescriptorDatabaseWriteService:
 
         image_name = os.path.basename(image_path)
 
-        descr_path = self.base_path + image_name[0:image_name.find('.')] + '/' + self.descriptor_class.__name__ + '/'
-        descr_filename = descr_path + str(self.descriptor_params) + '.bin'
-        print(descr_filename)
+        descr_filename = self.base_path + str(datetime.datetime.now()).split('.')[
+            0] + " " + self.descriptor_class.__name__ + " " + str(
+            self.descriptor_params) + " " + image_name[0:image_name.find('.')] + ".bin"
 
-        if not os.path.exists(descr_path):
-            os.makedirs(descr_path)
+        if not os.path.exists(self.base_path):
+            os.makedirs(self.base_path)
 
         descr = self.descriptor_class(self.descriptor_params)
 
@@ -38,7 +39,9 @@ class DescriptorDatabaseWriteService:
             self._dump_obj(file, info_obj)
             tile_stream.for_each(compose(
                 lambda descriptor: self._dump_obj(file, descriptor),
-                descr.calc))
+                self.generate_dump_obj(descr)))
+
+        return descr_filename
 
     def generate_database_info(self, image_path, length):
         return {
@@ -61,3 +64,10 @@ class DescriptorDatabaseWriteService:
 
             return DescriptorDatabaseWriteService(descriptor_class,
                                                   descriptor_params, path_to_descriptors)
+
+    @staticmethod
+    def generate_dump_obj(descr):
+        def generate_dump_obj_util(tile):
+            return DescriptorDump(tile.x, tile.y, tile.height, tile.width, descr.calc(tile))
+
+        return generate_dump_obj_util

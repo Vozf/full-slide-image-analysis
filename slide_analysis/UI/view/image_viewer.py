@@ -9,16 +9,21 @@ from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPalette, QPixmap
 from PyQt5.QtWidgets import *
 
-from slide_analysis.UI.image_helper import ImageHelper
-from slide_analysis.UI.tile_view_widget import TilePreviewPopup
-from slide_analysis.UI.ui_mainWindow import Ui_MainWindow
-from slide_analysis.UI.constants import SIMILAR_TILE_SIZE
+from slide_analysis.UI.view.image_helper import ImageHelper
+from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
+from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
+from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
 class ImageViewer(QMainWindow, Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, controller, model):
         super(ImageViewer, self).__init__()
+        self.model = model
+        self.controller = controller
+
         self.image_helper = None
+        self.user_selected_coordinates = None
+        self.user_selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
         self.setupUi(self)
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
@@ -49,11 +54,14 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     def mousePressEvent(self, q_mouse_event):
         if not self.is_image_opened():
             return
-        tile = self.image_helper.get_tile_from_coordinates(
-                self.image_helper.get_tile_coodinates(q_mouse_event.pos(), self.scrollArea.geometry()))
-        self.image_popup_widget = TilePreviewPopup(tile)
+
+        self.user_selected_coordinates = self.image_helper\
+            .get_tile_coordinates(q_mouse_event.pos(), self.scrollArea.geometry())
+
+        image_qt = self.image_helper.get_qt_from_coordinates(self.user_selected_coordinates)
+        self.image_popup_widget = TilePreviewPopup(image_qt, self.controller)
         self.image_popup_widget.show()
-        self.show_top_n([tile])
+        self.show_top_n([image_qt])
 
     def mouseReleaseEvent(self, q_mouse_event):
         if not self.is_image_popup_shown():
@@ -68,7 +76,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         for tile in tiles:
             label = QLabel()
             pixmap = QPixmap.fromImage(tile)
-            pixmap = pixmap.scaled(SIMILAR_TILE_SIZE[0], SIMILAR_TILE_SIZE[1], Qt.KeepAspectRatio)
+            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatio)
             label.setPixmap(pixmap)
             self.imageVerticalLayout.addWidget(label)
 
@@ -79,9 +87,10 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         return self.image_popup_widget is not None
 
     def open(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
-        if file_name:
-            self.image_helper = ImageHelper(file_name)
+        filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
+        print("filepath:", filepath)
+        if filepath:
+            self.image_helper = ImageHelper(filepath)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
 
     def get_scaled_pixmap(self, q_image):
@@ -219,6 +228,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.move_down_act.setShortcut("Down")
         self.move_down_act.triggered.connect(self.move_down)
 
+        self.calculate_descriptor_act = QAction("Calculate")
+        self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
+
     # noinspection PyAttributeOutsideInit
     def create_menus(self):
         self.file_menu = QMenu("&File", self)
@@ -239,39 +251,16 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.navigation_menu.addAction(self.move_down_act)
         self.navigation_menu.addAction(self.move_up_act)
 
+        self.descriptor_menu = QMenu("&Descriptors", self)
+
+        self.descriptor_menu.addAction(self.calculate_descriptor_act)
+
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)
         self.help_menu.addAction(self.about_qt_act)
 
         self.menuBar().addMenu(self.file_menu)
         self.menuBar().addMenu(self.view_menu)
+        self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.help_menu)
-
-    # def update_actions(self):
-    #     self.zoom_in_act.setEnabled(not self.fit_to_window_act.isChecked())
-    #     self.zoom_out_act.setEnabled(not self.fit_to_window_act.isChecked())
-    #     self.normal_size_act.setEnabled(not self.fit_to_window_act.isChecked())
-
-    # def scale_image(self, factor):
-    #     self.scale_factor *= factor
-    #     self.imageLabel.resize(self.scale_factor * self.imageLabel.pixmap().size())
-    #
-    #     self.adjust_scroll_bar(self.scrollArea.horizontalScrollBar(), factor)
-    #     self.adjust_scroll_bar(self.scrollArea.verticalScrollBar(), factor)
-    #
-    #     self.zoom_in_act.setEnabled(self.scale_factor < 3.0)
-    #     self.zoom_out_act.setEnabled(self.scale_factor > 0.333)
-
-    @staticmethod
-    def run(argv):
-        app = QApplication(argv)
-        image_viewer = ImageViewer()
-        app.installEventFilter(image_viewer)
-        image_viewer.show()
-        return app.exec_()
-
-    @staticmethod
-    def adjust_scroll_bar(scroll_bar, factor):
-        scroll_bar.setValue(int(factor * scroll_bar.value()
-                                + ((factor - 1) * scroll_bar.pageStep() / 2)))
