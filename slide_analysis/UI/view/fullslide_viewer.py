@@ -68,7 +68,7 @@ class FullslideViewer(QGraphicsView):
     def fitInView(self, **kwargs):
         rect = QRectF(self._photo.pixmap().rect())
         if not rect.isNull():
-            unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
+            # unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
             # self.scale(1 / unity.width(), 1 / unity.height())
             viewrect = self.viewport().rect()
             scenerect = self.transform().mapRect(rect)
@@ -98,13 +98,10 @@ class FullslideViewer(QGraphicsView):
         # self._scene.clear()
         self.image_helper = ImageHelper(filepath)
         viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
-        pixmap = QPixmap.fromImage(self.image_helper.get_q_image(viewrect))
+        pixmap = QPixmap.fromImage(self.image_helper.update_q_image(viewrect))
         if pixmap and not pixmap.isNull():
             self.setDragMode(QGraphicsView.ScrollHandDrag)
-            # self._photo =  QGraphicsPixmapItem()
             self._photo.setPixmap(pixmap)
-            # self._scene.addItem(self._photo)
-            # self._scene.addPixmap(pixmap)
             self.fitInView()
         else:
             self.setDragMode(QGraphicsView.NoDrag)
@@ -115,6 +112,8 @@ class FullslideViewer(QGraphicsView):
 
     def wheelEvent(self, event):
         if not self._photo.pixmap().isNull():
+            viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
+            image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
             if event.pixelDelta().y() > 0:
                 factor = 1.25
                 self._zoom += 1
@@ -122,9 +121,24 @@ class FullslideViewer(QGraphicsView):
                 factor = 0.8
                 self._zoom -= 1
             if self._zoom > 0:
-                print(self.mapToScene(self.viewport().rect()).boundingRect())
-                self.scale(factor, factor)
+                print(image_rect)
+                self.image_helper.set_current_image_rect(image_rect)
+                if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[1] < 0.5):
+                    self.image_helper.move_to_next_image_level()
+                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+
+                    self._photo.setPixmap(pixmap)
+                    self.fitInView()
+
+                    # self.scene().update()
+                elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
+                    self.image_helper.move_to_prev_image_level()
+                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+                    self._photo.setPixmap(pixmap)
+                else:
+                    self.scale(factor, factor)
             elif self._zoom == 0:
+                self.image_helper.set_current_image_rect(image_rect)
                 self.fitInView()
             else:
                 self._zoom = 0
