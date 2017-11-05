@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt, QRectF, QEvent, QTimer
-from PyQt5.QtGui import QPixmap, QResizeEvent, QMouseEvent, QCursor
+from PyQt5.QtCore import Qt, QRectF, QEvent, QTimer, QRect
+from PyQt5.QtGui import QPixmap, QResizeEvent, QMouseEvent, QCursor, QTransform
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
 
 from slide_analysis.UI.view import ImageHelper
@@ -110,26 +110,34 @@ class FullslideViewer(QGraphicsView):
     def zoomFactor(self):
         return self._zoom
 
+    def update_image_after_changing_level(self):
+        self.fitInView()
+        factor = self.image_helper.get_scale_factor()
+        self.scale(factor, factor)
+        rect_tuple = self.image_helper.get_current_displayed_image_rect()
+        self.ensureVisible(rect_tuple[0], rect_tuple[1], rect_tuple[2], rect_tuple[3], 0, 0)
+
     def wheelEvent(self, event):
         if not self._photo.pixmap().isNull():
             viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
             image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
-            if event.pixelDelta().y() > 0:
+            if event.angleDelta().y() > 0:
                 factor = 1.25
                 self._zoom += 1
             else:
                 factor = 0.8
                 self._zoom -= 1
             if self._zoom > 0:
-                print(image_rect)
-                self.image_helper.set_current_image_rect(image_rect)
+                # print(image_rect)
+
                 if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[1] < 0.5):
+                    # print(image_rect)
+                    self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_next_image_level()
-                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+                    pixmap = QPixmap.fromImage(self.image_helper.get_current_image())
 
                     self._photo.setPixmap(pixmap)
-                    self.fitInView()
-
+                    self.update_image_after_changing_level()
                     # self.scene().update()
                 elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
                     self.image_helper.move_to_prev_image_level()
