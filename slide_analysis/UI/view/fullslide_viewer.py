@@ -78,7 +78,6 @@ class FullslideViewer(QGraphicsView):
             #     self.move_to_next_image_level()
             self.scale(factor, factor)
             self.centerOn(rect.center())
-            self._zoom = 0
 
     # def move_to_next_image_level(self):
     #     pixmap = QPixmap.fromImage(self.image_helper.zoom_in())
@@ -140,9 +139,12 @@ class FullslideViewer(QGraphicsView):
                     self.update_image_after_changing_level()
                     # self.scene().update()
                 elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
+                    self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_prev_image_level()
                     pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+
                     self._photo.setPixmap(pixmap)
+                    self.update_image_after_changing_level()
                 else:
                     self.scale(factor, factor)
             elif self._zoom == 0:

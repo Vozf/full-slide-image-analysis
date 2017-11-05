@@ -160,6 +160,10 @@ class ImageHelper:
             self.current_level += 1
             self.current_displayed_image_part_size = (
                 self.current_displayed_image_part_size[0] // 2, self.current_displayed_image_part_size[1] // 2)
+            self.update_image_rect()
+            self.image = self.openslide_image.read_region(self.current_image_part_coordinates,
+                                                          self.current_level,
+                                                          self.current_image_part_size)
 
     # Zooming is just moving to next level of image
     def zoom_in(self):
