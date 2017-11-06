@@ -19,4 +19,4 @@ def get_descriptor_class_by_name(name):
 def get_tile_from_coordinates( path, x_coord, y_coord, width, height):
     return Tile(x_coord, y_coord, width, height,
                 openslide.open_slide(path).read_region((x_coord, y_coord), 0,
-                                                       (width, height)).getdata())
+                                                       (width, height)))
