@@ -6,9 +6,9 @@ from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 
 class ImageHelper:
-    def __init__(self, filename):
-        self.filename = filename
-        self.openslide_image = openslide.OpenSlide(filename)
+    def __init__(self, filepath):
+        self.filepath = filepath
+        self.openslide_image = openslide.OpenSlide(filepath)
         self.current_level = self.openslide_image.level_count - 1
         self.level_dimensions = self.openslide_image.level_dimensions
         self.current_coordinates = (0, 0)
