@@ -22,10 +22,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         super(ImageViewer, self).__init__()
         self.model = model
         self.controller = controller
+        self.image_helper = None
 
-        # self.image_helper = None
-        self.user_selected_coordinates = None
-        self.user_selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
         self.setupUi(self)
         self.fullslide_viewer = FullslideViewer(self)
         self.fullslideImageLayout.addWidget(self.fullslide_viewer)
@@ -96,8 +94,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         print("filepath:", filepath)
         if filepath:
-            # self.image_helper = ImageHelper(filepath)
-            self.fullslide_viewer.set_image(filepath)
+            self.image_helper = ImageHelper(filepath)
+            self.fullslide_viewer.set_image(self.image_helper)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)

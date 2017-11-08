@@ -1,8 +1,11 @@
+from PyQt5 import QtCore
+
 from PyQt5.QtCore import Qt, QRectF, QEvent, QTimer, QRect
 from PyQt5.QtGui import QPixmap, QResizeEvent, QMouseEvent, QCursor, QTransform
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
 
 from slide_analysis.UI.view import ImageHelper
+from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
 
 
 class FullslideViewer(QGraphicsView):
@@ -19,6 +22,26 @@ class FullslideViewer(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFrameShape(QFrame.NoFrame)
+        self.controller = parent.controller
+        self.image_popup_widget = None
+
+    def mousePressEvent(self, q_mouse_event):
+        if not self.is_image_opened():
+                return
+        user_selected_coordinates = self.image_helper\
+            .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
+
+        image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
+        self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
+        self.image_popup_widget.show()
+
+    # def mouseReleaseEvent(self, q_mouse_event):
+    #     if not self.is_image_popup_shown():
+    #         return
+    #     self.image_popup_widget.destroy()
+    #     q_mouse_event.accept()
+
+
 
     # def resizeEvent(self, event: QResizeEvent):
     #     self.fitInView()
@@ -26,7 +49,23 @@ class FullslideViewer(QGraphicsView):
     # def get_scene(self):
     #     return self._scene
 
-    # def mouseMoveEvent(self, event):
+    # def keyPressEvent(self, event):
+    #     if event.key() == QtCore.Qt.Key_Space:
+    #         if self.is_image_popup_shown():
+    #             if self.controller.last_descriptor_database is None:
+    #                 # todo add popup
+    #                 print("there should be popup to select descriptor database")
+    #             self.controller.find_similar(self.image_popup_widget.coordinates)
+    #             self.image_popup_widget.destroy()
+    #             event.accept()
+    #     else:
+    #         super().keyPressEvent(event)
+
+    def mouseMoveEvent(self, q_mouse_event):
+        if not self.is_image_popup_shown():
+            return
+        self.image_popup_widget.destroy()
+        q_mouse_event.accept()
     #     width, height = self.width(), self.height()
     #     event_x, event_y = event.x(), event.y()
     #
@@ -91,11 +130,16 @@ class FullslideViewer(QGraphicsView):
     #     else:
     #         self.setDragMode(QGraphicsView.NoDrag)
     #         self._photo.setPixmap(QPixmap())
+    def is_image_popup_shown(self):
+        return self.image_popup_widget is not None
 
-    def set_image(self, filepath):
+    def is_image_opened(self):
+        return self.image_helper is not None
+
+    def set_image(self, image_helper):
         self._zoom = 0
         # self._scene.clear()
-        self.image_helper = ImageHelper(filepath)
+        self.image_helper = image_helper
         viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
         pixmap = QPixmap.fromImage(self.image_helper.update_q_image(viewrect))
         if pixmap and not pixmap.isNull():

@@ -28,12 +28,12 @@ class ImageHelper:
         self.image_slide = openslide.ImageSlide(self.image)
         self.print_status()
 
-    def get_tile_coordinates(self, mouse_pos_point, scroll_area_coordinates):
-        # scroll_area_coordinates = self.scrollArea.geometry()
-        actual_coordianates_x = (mouse_pos_point.x() - scroll_area_coordinates.x()) * self.current_displayed_image_part_size[
-            0] // scroll_area_coordinates.width() * pow(2, self.current_level) + self.current_displayed_image_part_coordinates[0]
-        actual_coordianates_y = (mouse_pos_point.y() - scroll_area_coordinates.y()) * self.current_displayed_image_part_size[
-            1] // scroll_area_coordinates.height() * pow(2, self.current_level) + self.current_displayed_image_part_coordinates[1]
+    def get_filepath(self):
+        return self.filename
+
+    def get_tile_coordinates(self, mouse_pos_point):
+        actual_coordianates_x = int((mouse_pos_point.x()) * pow(2, self.current_level) + self.current_image_part_coordinates[0])
+        actual_coordianates_y = int((mouse_pos_point.y()) * pow(2, self.current_level) + self.current_image_part_coordinates[1])
         print('User selected tile coordinates: ', actual_coordianates_x, actual_coordianates_y)
         actual_coordianates = (actual_coordianates_x, actual_coordianates_y)
 
