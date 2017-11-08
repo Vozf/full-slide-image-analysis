@@ -22,7 +22,6 @@ class Controller:
         self.descriptor_params = self.settings.value(DESCRIPTOR_PARAMS, (3, 2, 3))
         self.chosen_similarity_idx = self.settings.value(CHOSEN_SIMILARITY, 0)
         self.similarity_params = self.settings.value(SIMILARITY_PARAMS, None)
-        self.chosen_n = self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
         self.last_descriptor_database = None
 
     def get_chosen_n(self):
@@ -69,7 +68,7 @@ class Controller:
         self.last_descriptor_database = self._select_last_modified_file_in_folder()
         desc_path = self.last_descriptor_database
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
-        top_n = self.model.find_similar(desc_path, tile, self.chosen_n,
+        top_n = self.model.find_similar(desc_path, tile, self.get_chosen_n(),
                                         self.chosen_similarity_idx, self.similarity_params)
         qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(
             (tup[1].x, tup[1].y)), top_n))
