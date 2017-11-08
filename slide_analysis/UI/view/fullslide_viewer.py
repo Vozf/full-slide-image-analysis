@@ -63,48 +63,10 @@ class FullslideViewer(QGraphicsView):
 
     def mouseMoveEvent(self, q_mouse_event):
         if self.is_image_popup_shown():
+            print('popup is alive')
             self.image_popup_widget.destroy()
-            q_mouse_event.accept()
+            self.image_popup_widget = None
         QGraphicsView.mouseMoveEvent(self, q_mouse_event)
-
-
-    #     width, height = self.width(), self.height()
-    #     event_x, event_y = event.x(), event.y()
-    #
-    #     if event_y < 0 or event_y > height or \
-    #                     event_x < 0 or event_x > width:
-    #         # Mouse cursor has left the widget. Wrap the mouse.
-    #         global_pos = self.mapToGlobal(event.pos())
-    #         if event_y < 0 or event_y > height:
-    #             # Cursor left on the y axis. Move cursor to the
-    #             # opposite side.
-    #             global_pos.setY(global_pos.y() +
-    #                             (height if event_y < 0 else -height))
-    #         else:
-    #             # Cursor left on the x axis. Move cursor to the
-    #             # opposite side.
-    #             global_pos.setX(global_pos.x() +
-    #                             (width if event_x < 0 else -width))
-    #
-    #         # For the scroll hand dragging to work with mouse wrapping
-    #         # we have to emulate a mouse release, move the cursor and
-    #         # then emulate a mouse press. Not doing this causes the
-    #         # scroll hand drag to stop after the cursor has moved.
-    #         r_event = QMouseEvent(QEvent.MouseButtonRelease,
-    #                               self.mapFromGlobal(QCursor.pos()),
-    #                               Qt.LeftButton,
-    #                               Qt.NoButton,
-    #                               Qt.NoModifier)
-    #         self.mouseReleaseEvent(r_event)
-    #         QCursor.setPos(global_pos)
-    #         p_event = QMouseEvent(QEvent.MouseButtonPress,
-    #                               self.mapFromGlobal(QCursor.pos()),
-    #                               Qt.LeftButton,
-    #                               Qt.LeftButton,
-    #                               Qt.NoModifier)
-    #         QTimer.singleShot(0, lambda: self.mousePressEvent(p_event))
-    #     else:
-    #         QGraphicsView.mouseMoveEvent(self, event)
 
     def fitInView(self, **kwargs):
         rect = QRectF(self._photo.pixmap().rect())
