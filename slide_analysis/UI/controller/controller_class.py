@@ -1,6 +1,8 @@
 import os
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
+import os
+import glob
 
 from slide_analysis.UI.view import ImageViewer
 from slide_analysis.UI.model import Model
@@ -20,6 +22,7 @@ class Controller:
         self.descriptor_params = self.settings.value(DESCRIPTOR_PARAMS, (3, 2, 3))
         self.chosen_similarity_idx = self.settings.value(CHOSEN_SIMILARITY, 0)
         self.similarity_params = self.settings.value(SIMILARITY_PARAMS, None)
+        self.last_descriptor_database = None
 
     def get_chosen_n(self):
         return self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
@@ -41,13 +44,15 @@ class Controller:
     def settings_changed(self, settings_new_state):
         for k, v in settings_new_state.items():
             self.settings.setValue(k, v)
+    def get_imagepath(self):
+        return self.image_viewer.image_helper.filepath
 
-    def calculate_descriptors_idx(self, idx):
-        def calculate_descriptor():
-            filename = self.image_viewer.image_helper.filename
-            self.model.calculate_descriptors(idx, None, filename, DESCRIPTOR_DIRECTORY_PATH)
-
-        return calculate_descriptor
+    def calculate_descriptors(self):
+        imagepath = self.get_imagepath()
+        descriptor_base = self.model.calculate_descriptors(self.chosen_descriptor_idx,
+                                                           self.descriptor_params,
+                                                           imagepath, DESCRIPTOR_DIRECTORY_PATH)
+        self.last_descriptor_database = descriptor_base
 
     def get_descriptors(self):
         return self.model.descriptors
@@ -58,16 +63,20 @@ class Controller:
     def find_similar(self):
         coordinates = self.image_viewer.user_selected_coordinates
         dimensions = self.image_viewer.user_selected_dimensions
-        # todo generalise using get_fullslide_image_filename()
-        current_descriptor = self.get_chosen_descriptor_name()
-        desc_path = DESCRIPTOR_DIRECTORY_PATH + '/' + self.get_fullslide_image_filename() + '/' + current_descriptor + "/(3, 2, 3).bin"
-        image_path = self.image_viewer.image_helper.filename
-
-        tile = get_tile_from_coordinates(image_path, *coordinates, *dimensions)
+        imagepath = self.get_imagepath()
+        # todo remove when database select is added
+        self.last_descriptor_database = self._select_last_modified_file_in_folder()
+        desc_path = self.last_descriptor_database
+        tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
         top_n = self.model.find_similar(desc_path, tile, self.get_chosen_n(),
                                         self.chosen_similarity_idx, self.similarity_params)
-        qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates((tup[1].x, tup[1].y)), top_n))
-
+        qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(
+            (tup[1].x, tup[1].y)), top_n))
         self.image_viewer.show_top_n(qts)
 
-
+    @staticmethod
+    def _select_last_modified_file_in_folder():
+        files_path = os.path.join(DESCRIPTOR_DIRECTORY_PATH, '*')
+        files = sorted(
+            glob.iglob(files_path), key=os.path.getctime, reverse=True)
+        return files[0]

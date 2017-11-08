@@ -94,7 +94,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
     def open(self):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
-        print(filepath)
+        print("filepath:", filepath)
         if filepath:
             # self.image_helper = ImageHelper(filepath)
             self.fullslide_viewer.set_image(filepath)
@@ -237,14 +237,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         # self.move_down_act.setShortcut("Down")
         # self.move_down_act.triggered.connect(self.move_down)
 
-        descriptors = self.controller.get_descriptors()
-
-        descriptors_action = list(map(lambda x: QAction(x.__name__), descriptors))
-
-        for i in range(len(descriptors_action)):
-            descriptors_action[i].triggered.connect(self.controller.calculate_descriptors_idx(i))
-
-        self.descriptors = descriptors_action
+        self.calculate_descriptor_act = QAction("Calculate")
+        self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
 
         self.settings_act = QAction("Settings")
         self.settings_act.triggered.connect(self.show_settings)
@@ -277,11 +271,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         # self.navigation_menu.addAction(self.move_up_act)
 
         self.descriptor_menu = QMenu("&Descriptors", self)
-        for desc in self.descriptors:
-            self.descriptor_menu.addAction(desc)
 
-        # self.settings_menu = QMenu("&Settings", self)
-        # self.settings_menu.addAction(self.settings_act)
+        self.descriptor_menu.addAction(self.calculate_descriptor_act)
 
         self.help_menu = QMenu("&Help", self)
         self.help_menu.addAction(self.about_act)

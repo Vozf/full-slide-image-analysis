@@ -8,17 +8,17 @@ from slide_analysis.search_service import SearchService
 class Model:
     def __init__(self):
         self.descriptors = all_descriptors
-        self.descriptor_params = [None, (3, 2, 3)]
         self.similarities = all_similarities
-        self.similarities_params = [None]
 
     def calculate_descriptors(self, descriptor_idx, descriptor_params, imagepath, directory_path):
         split = SplittingService()
         stream = split.split_to_tiles(imagepath)
 
-        descriptor_database_service =\
-            DescriptorDatabaseWriteService(self.descriptors[descriptor_idx], self.descriptor_params[descriptor_idx], directory_path)
-        descriptor_database_service.create(stream)
+        descriptor_database_service = \
+            DescriptorDatabaseWriteService(self.descriptors[descriptor_idx], descriptor_params,
+                                           directory_path)
+        return descriptor_database_service.create(stream)
 
     def find_similar(self, desc_path, tile, n, similarity_class_idx, similarity_class_params):
-        return SearchService(desc_path).search(tile, n, self.similarities[similarity_class_idx], similarity_class_params)
+        return SearchService(desc_path).search(tile, n, self.similarities[similarity_class_idx],
+                                               similarity_class_params)

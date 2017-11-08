@@ -25,6 +25,9 @@ class TilePreviewPopup(QLabel):
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Space:
+            if self.controller.last_descriptor_database is None:
+                # todo add popup
+                print("there should be popup to select descriptor database")
             self.controller.find_similar()
             self.close()
             event.accept()
