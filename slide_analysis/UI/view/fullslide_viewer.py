@@ -24,22 +24,22 @@ class FullslideViewer(QGraphicsView):
         self.setFrameShape(QFrame.NoFrame)
         self.controller = parent.controller
         self.image_popup_widget = None
+        self.current_mouse_press_coordinates = None
 
     def mousePressEvent(self, q_mouse_event):
-        if not self.is_image_opened():
-                return
-        user_selected_coordinates = self.image_helper\
-            .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
+        self.current_mouse_press_coordinates = q_mouse_event.pos()
+        print(self.current_mouse_press_coordinates)
+        QGraphicsView.mousePressEvent(self, q_mouse_event)
 
-        image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
-        self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
-        self.image_popup_widget.show()
+    def mouseReleaseEvent(self, q_mouse_event):
+        if self.current_mouse_press_coordinates == q_mouse_event.pos():
+            user_selected_coordinates = self.image_helper \
+                .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
 
-    # def mouseReleaseEvent(self, q_mouse_event):
-    #     if not self.is_image_popup_shown():
-    #         return
-    #     self.image_popup_widget.destroy()
-    #     q_mouse_event.accept()
+            image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
+            self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
+            self.image_popup_widget.show()
+        QGraphicsView.mouseReleaseEvent(self, q_mouse_event)
 
 
 
@@ -62,10 +62,12 @@ class FullslideViewer(QGraphicsView):
     #         super().keyPressEvent(event)
 
     def mouseMoveEvent(self, q_mouse_event):
-        if not self.is_image_popup_shown():
-            return
-        self.image_popup_widget.destroy()
-        q_mouse_event.accept()
+        if self.is_image_popup_shown():
+            self.image_popup_widget.destroy()
+            q_mouse_event.accept()
+        QGraphicsView.mouseMoveEvent(self, q_mouse_event)
+
+
     #     width, height = self.width(), self.height()
     #     event_x, event_y = event.x(), event.y()
     #
