@@ -22,6 +22,7 @@ class Controller:
         self.descriptor_params = self.settings.value(DESCRIPTOR_PARAMS, (3, 2, 3))
         self.chosen_similarity_idx = self.settings.value(CHOSEN_SIMILARITY, 0)
         self.similarity_params = self.settings.value(SIMILARITY_PARAMS, None)
+        self.chosen_n = self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
         self.last_descriptor_database = None
 
     def get_chosen_n(self):
