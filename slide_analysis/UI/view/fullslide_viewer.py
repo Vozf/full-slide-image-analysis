@@ -1,10 +1,8 @@
-from PyQt5 import QtCore
 
-from PyQt5.QtCore import Qt, QRectF, QEvent, QTimer, QRect
-from PyQt5.QtGui import QPixmap, QResizeEvent, QMouseEvent, QCursor, QTransform
+from PyQt5.QtCore import Qt, QRectF
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
 
-from slide_analysis.UI.view import ImageHelper
 from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
 
 
