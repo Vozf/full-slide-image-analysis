@@ -31,6 +31,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
         self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
         self.topImagesScrollArea.setWidgetResizable(True)
+        self.topImagesScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.topImagesScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.image_popup_widget = None
         self.settings_dialog = None
         self.show()
@@ -51,7 +53,8 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
 
     def show_top_n(self, tiles):
         for i in reversed(range(self.imageVerticalLayout.count())):
-            self.imageVerticalLayout.removeItem(self.imageVerticalLayout.itemAt(i))
+            self.imageVerticalLayout.itemAt(i).widget().setParent(None)
+
 
         for tile in tiles:
             label = QLabel()
