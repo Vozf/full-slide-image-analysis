@@ -20,7 +20,5 @@ class SearchService:
                 element=(tile_similarity.compare(tile_descriptor, descriptor_dump.descriptor),
                          descriptor_dump)))
 
-        # todo: convert tile idxs to actual tiles
-
         return top_n
 

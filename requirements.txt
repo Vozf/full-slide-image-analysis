@@ -2,4 +2,3 @@ numpy
 openslide-python
 PyQt5
 blist
-# todo: add
