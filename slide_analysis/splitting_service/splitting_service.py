@@ -28,7 +28,7 @@ class SplittingService:
     def _cut_tile_by_coord(self, x_coord, y_coord):
         ret = Tile(x_coord, y_coord, self.tile_width, self.tile_height,
                     self.slide.read_region((x_coord, y_coord), 0,
-                                           (self.tile_width, self.tile_height)).getdata())
+                                           (self.tile_width, self.tile_height)))
         return ret
 
     def _cut_tile(self, index):
