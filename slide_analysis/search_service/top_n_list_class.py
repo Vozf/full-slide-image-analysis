@@ -1,11 +1,8 @@
-from blist import sortedlist
-
-
 class TopNList:
     MIN_IDX = 0
 
     def __init__(self, n):
-        self._data = sortedlist([(0, 0)] * n, key=lambda x: x[0])
+        self._data = list([(0, 0)] * n)
 
     def __iter__(self):
         return iter(self._data)
@@ -16,4 +13,5 @@ class TopNList:
     def update(self, element):
         if element[0] > self._data[self.MIN_IDX][0]:
             del self._data[self.MIN_IDX]
-            self._data.add(element)
+            self._data.append(element)
+            self._data.sort(key=lambda x: x[0])
