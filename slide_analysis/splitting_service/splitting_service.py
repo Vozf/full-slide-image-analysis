@@ -19,10 +19,14 @@ class SplittingService:
         self.num_cols = int(self.width / self.step)
 
     def _get_params_for_cut(self, index):
-        row = int(index / self.num_rows)
-        column = index - row * self.num_rows
-        y_coord = row * self.step
+        # row = int(index / self.num_rows)
+        # column = index - row * self.num_rows
+        # y_coord = row * self.step
+        # x_coord = column * self.step
+        row = int(index / self.num_cols)
+        column = index - row * self.num_cols
         x_coord = column * self.step
+        y_coord = row * self.step
         return x_coord, y_coord
 
     def _cut_tile_by_coord(self, x_coord, y_coord):
@@ -41,3 +45,13 @@ class SplittingService:
 
     def __len__(self):
         return self.num_rows * self.num_cols
+
+    @staticmethod
+    def get_tile_coords(index, tile_w, tile_h, step, img_w, img_h):
+        num_rows = int(img_h / step)
+        num_cols = int(img_w / step)
+        row = int(index / num_rows)
+        column = index - row * num_rows
+        y_coord = row * step
+        x_coord = column * step
+        return x_coord, y_coord

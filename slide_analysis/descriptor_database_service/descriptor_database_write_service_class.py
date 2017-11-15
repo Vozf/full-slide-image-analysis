@@ -1,6 +1,7 @@
 import os
 import pickle
 import datetime
+import numpy
 from slide_analysis.utils import compose, get_descriptor_class_by_name, DescriptorDump
 
 
@@ -16,7 +17,7 @@ class DescriptorDatabaseWriteService:
 
     @staticmethod
     def _dump_obj(file, obj):
-        return pickle.dump(obj, file)
+        return numpy.save(file, obj)
 
     def create(self, tile_stream):
         image_path = tile_stream.splitting_service.path
@@ -26,7 +27,7 @@ class DescriptorDatabaseWriteService:
 
         descr_filename = self.base_path + str(datetime.datetime.now()).split('.')[
             0] + " " + self.descriptor_class.__name__ + " " + str(
-            self.descriptor_params) + " " + image_name[0:image_name.find('.')] + ".bin"
+            self.descriptor_params) + " " + image_name[0:image_name.find('.')] + ".npy"
 
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
@@ -37,9 +38,7 @@ class DescriptorDatabaseWriteService:
 
         with open(descr_filename, 'wb') as file:
             self._dump_obj(file, info_obj)
-            tile_stream.for_each(compose(
-                lambda descriptor: self._dump_obj(file, descriptor),
-                self.generate_dump_obj(descr)))
+            self._dump_obj(file, descr.get_descriptor_array(tile_stream))
 
         return descr_filename
 

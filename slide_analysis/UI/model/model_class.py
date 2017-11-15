@@ -14,6 +14,9 @@ class Model:
         split = SplittingService()
         stream = split.split_to_tiles(imagepath)
 
+        print('-------')
+        print(self.descriptors[descriptor_idx], descriptor_params, directory_path, stream)
+        print('-------')
         descriptor_database_service = \
             DescriptorDatabaseWriteService(self.descriptors[descriptor_idx], descriptor_params,
                                            directory_path)
