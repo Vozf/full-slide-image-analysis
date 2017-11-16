@@ -5,7 +5,7 @@ import glob
 from slide_analysis.UI.view import ImageViewer
 from slide_analysis.UI.model import Model
 from slide_analysis.UI.controller.constants import *
-from slide_analysis.utils.functions import get_tile_from_coordinates
+from slide_analysis.utils.functions import get_tile_from_coordinates, get_tile_coords_from_index
 
 
 class Controller:
@@ -54,8 +54,9 @@ class Controller:
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
         top_n = self.model.find_similar(desc_path, tile, self.chosen_n,
                                         self.chosen_similarity_idx, self.similarity_params)
-        qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(
-            (tup[1].x, tup[1].y)), top_n))
+
+        qts = list(map(lambda tup:
+                       self.image_viewer.image_helper.get_qt_from_coordinates(tup), top_n))
 
         self.image_viewer.show_top_n(qts)
 

@@ -19,10 +19,6 @@ class SplittingService:
         self.num_cols = int(self.width / self.step)
 
     def _get_params_for_cut(self, index):
-        # row = int(index / self.num_rows)
-        # column = index - row * self.num_rows
-        # y_coord = row * self.step
-        # x_coord = column * self.step
         row = int(index / self.num_cols)
         column = index - row * self.num_cols
         x_coord = column * self.step
