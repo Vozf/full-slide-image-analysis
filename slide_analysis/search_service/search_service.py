@@ -1,7 +1,7 @@
+import numpy
+
 from slide_analysis.descriptor_database_service.descriptor_database_read_service_class import \
     DescriptorDatabaseReadService
-from slide_analysis.search_service.top_n_list_class import TopNList
-import numpy
 from slide_analysis.utils.functions import get_tile_coords_from_index
 
 
@@ -21,11 +21,9 @@ class SearchService:
                                           self.info_obj['img_height'])
 
     def search(self, tile, n, similarity_class, similarity_class_params):
-        top_n = TopNList(n)
         tile_descriptor = self.tile_descriptor_class.calc(tile)
         tile_similarity = similarity_class(similarity_class_params)
-        distances = tile_similarity.compare_arr_to_single(self.descriptors_array,
-                                                          tile_descriptor)
+        distances = tile_similarity.compare(self.descriptors_array, tile_descriptor)
         indexes = numpy.argsort(-distances)
 
         return self.convert_to_tile_coords(indexes[0: n])

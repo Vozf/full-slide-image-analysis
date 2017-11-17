@@ -3,16 +3,14 @@
 # from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
 #                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
 #
-from PyQt5 import QtCore
 
 from PyQt5.QtCore import QDir, Qt
-from PyQt5.QtGui import QPalette, QPixmap
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.view.fullslide_viewer import FullslideViewer
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
-from slide_analysis.UI.view.tile_view_widget import TilePreviewPopup
 from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
@@ -54,7 +52,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
     def show_top_n(self, tiles):
         for i in reversed(range(self.imageVerticalLayout.count())):
             self.imageVerticalLayout.itemAt(i).widget().setParent(None)
-
 
         for tile in tiles:
             label = QLabel()

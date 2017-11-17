@@ -1,8 +1,10 @@
+import datetime
 import os
 import pickle
-import datetime
+
 import numpy
-from slide_analysis.utils import compose, get_descriptor_class_by_name, DescriptorDump
+
+from slide_analysis.utils import get_descriptor_class_by_name, DescriptorDump
 
 
 class DescriptorDatabaseWriteService:
@@ -19,7 +21,7 @@ class DescriptorDatabaseWriteService:
     def _dump_obj(file, obj):
         return numpy.save(file, obj)
 
-    #todo move making of descr_filename somewhere else, so it can be accessed and modified
+    # todo move making of descr_filename somewhere else, so it can be accessed and modified
     def create(self, tile_stream):
         split = tile_stream.splitting_service
         image_path = split.path

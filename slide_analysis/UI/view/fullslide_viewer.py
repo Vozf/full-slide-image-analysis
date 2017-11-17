@@ -1,4 +1,3 @@
-
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
@@ -35,11 +34,10 @@ class FullslideViewer(QGraphicsView):
                 .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
 
             image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
-            self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
+            self.image_popup_widget = TilePreviewPopup(image_qt, self.controller,
+                                                       user_selected_coordinates)
             self.image_popup_widget.show()
         QGraphicsView.mouseReleaseEvent(self, q_mouse_event)
-
-
 
     # def resizeEvent(self, event: QResizeEvent):
     #     self.fitInView()
@@ -135,7 +133,8 @@ class FullslideViewer(QGraphicsView):
             if self._zoom > 0:
                 # print(image_rect)
 
-                if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[1] < 0.5):
+                if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() /
+                    viewrect[1] < 0.5):
                     # print(image_rect)
                     self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_next_image_level()
@@ -144,7 +143,9 @@ class FullslideViewer(QGraphicsView):
                     self._photo.setPixmap(pixmap)
                     self.update_image_after_changing_level()
                     # self.scene().update()
-                elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
+                elif factor < 1 and (
+                            image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[
+                    1] > 2):
                     self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_prev_image_level()
                     pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
