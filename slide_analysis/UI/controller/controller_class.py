@@ -1,11 +1,12 @@
+import glob
+import os
+
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
-import os
-import glob
 
-from slide_analysis.UI.view import ImageViewer
-from slide_analysis.UI.model import Model
 from slide_analysis.UI.controller.constants import *
+from slide_analysis.UI.model import Model
+from slide_analysis.UI.view import ImageViewer
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 from slide_analysis.utils.functions import get_tile_from_coordinates
 
@@ -29,7 +30,8 @@ class Controller:
         return self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
 
     def get_chosen_descriptor_idx(self):
-        return self.settings.value(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE, type=int)
+        return self.settings.value(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE,
+                                   type=int)
 
     def get_chosen_descriptor_name(self):
         return self.get_descriptors()[self.get_chosen_descriptor_idx()].__name__
@@ -72,7 +74,7 @@ class Controller:
         top_n = self.model.find_similar(desc_path, tile, self.get_chosen_n(),
                                         self.chosen_similarity_idx, self.similarity_params)
         qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(
-            (tup[1].x, tup[1].y)), top_n))
+            tup), top_n))
         self.image_viewer.show_top_n(qts)
 
     @staticmethod

@@ -1,4 +1,4 @@
-DESCRIPTOR_DIRECTORY_PATH = '../descriptor_apply_service'
+DESCRIPTOR_DIRECTORY_PATH = '../descriptor_dumps'
 CHOSEN_DESCRIPTOR_IDX = 'chosen_descriptor'
 CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE = 1
 DESCRIPTOR_PARAMS = 'descriptor_params'
