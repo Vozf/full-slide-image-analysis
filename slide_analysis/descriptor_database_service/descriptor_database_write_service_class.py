@@ -1,6 +1,7 @@
 import os
 import pickle
 import datetime
+import numpy
 from slide_analysis.utils import compose, get_descriptor_class_by_name, DescriptorDump
 
 
@@ -16,40 +17,46 @@ class DescriptorDatabaseWriteService:
 
     @staticmethod
     def _dump_obj(file, obj):
-        return pickle.dump(obj, file)
+        return numpy.save(file, obj)
 
     #todo move making of descr_filename somewhere else, so it can be accessed and modified
     def create(self, tile_stream):
-        image_path = tile_stream.splitting_service.path
+        split = tile_stream.splitting_service
+        image_path = split.path
         length = len(tile_stream)
 
         image_name = os.path.basename(image_path)
 
         descr_filename = self.base_path + str(datetime.datetime.now()).split('.')[
             0] + " " + self.descriptor_class.__name__ + " " + str(
-            self.descriptor_params) + " " + image_name[0:image_name.find('.')] + ".bin"
+            self.descriptor_params) + " " + image_name[0:image_name.find('.')] + ".npy"
 
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
 
         descr = self.descriptor_class(self.descriptor_params)
 
-        info_obj = self.generate_database_info(image_path, length)
+        info_obj = self.generate_database_info(image_path, length, split.tile_width,
+                                               split.tile_height, split.step,
+                                               split.width, split.height)
 
         with open(descr_filename, 'wb') as file:
             self._dump_obj(file, info_obj)
-            tile_stream.for_each(compose(
-                lambda descriptor: self._dump_obj(file, descriptor),
-                self.generate_dump_obj(descr)))
+            self._dump_obj(file, descr.get_descriptor_array(tile_stream))
 
         return descr_filename
 
-    def generate_database_info(self, image_path, length):
+    def generate_database_info(self, image_path, length, tile_w, tile_h, step, img_w, img_h):
         return {
             "descriptor_name": self.descriptor_class.__name__,
             "descriptor_params": self.descriptor_params,
             "image_path": image_path,
-            "length": length
+            "length": length,
+            "tile_width": tile_w,
+            "tile_height": tile_h,
+            "step": step,
+            "img_width": img_w,
+            "img_height": img_h
         }
 
     @staticmethod
