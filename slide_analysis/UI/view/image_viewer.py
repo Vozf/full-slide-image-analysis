@@ -92,6 +92,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         if filepath:
             self.image_helper = ImageHelper(filepath)
             self.imageLabel.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
+            self.controller.set_desc_path(filepath)
 
     def get_scaled_pixmap(self, q_image):
         pixmap = QPixmap.fromImage(q_image)

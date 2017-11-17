@@ -21,7 +21,6 @@ class SearchService:
                                           self.info_obj['img_height'])
 
     def search(self, tile, n, similarity_class, similarity_class_params):
-        top_n = TopNList(n)
         tile_descriptor = self.tile_descriptor_class.calc(tile)
         tile_similarity = similarity_class(similarity_class_params)
         distances = tile_similarity.compare_arr_to_single(self.descriptors_array,

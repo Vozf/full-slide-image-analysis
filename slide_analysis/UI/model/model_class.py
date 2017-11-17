@@ -19,6 +19,9 @@ class Model:
                                            directory_path)
         return descriptor_database_service.create(stream)
 
-    def find_similar(self, desc_path, tile, n, similarity_class_idx, similarity_class_params):
-        return SearchService(desc_path).search(tile, n, self.similarities[similarity_class_idx],
+    def init_search_service(self, desc_path):
+        self.search_service = SearchService(desc_path)
+
+    def find_similar(self, tile, n, similarity_class_idx, similarity_class_params):
+        return self.search_service.search(tile, n, self.similarities[similarity_class_idx],
                                                similarity_class_params)
