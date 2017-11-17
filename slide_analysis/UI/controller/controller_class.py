@@ -8,7 +8,6 @@ from slide_analysis.UI.controller.constants import *
 from slide_analysis.utils.functions import get_tile_from_coordinates
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService \
     as DDWS
-import numpy
 
 
 class Controller:

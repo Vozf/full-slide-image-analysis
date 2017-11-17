@@ -23,10 +23,10 @@ def get_tile_from_coordinates(path, x_coord, y_coord, width, height):
                                                        (width, height)))
 
 
-def get_tile_coords_from_index(index, tile_w, tile_h, step, img_w, img_h):
+def get_tiles_coords_from_indexes(indexes, step, img_w):
     num_cols = int(img_w / step)
-    row = (index / num_cols).astype(int)
-    column = index - row * num_cols
+    row = (indexes / num_cols).astype(int)
+    column = indexes - row * num_cols
     y_coord = row * step
     x_coord = column * step
     return numpy.array([x_coord, y_coord]).T

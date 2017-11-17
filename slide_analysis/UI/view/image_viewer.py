@@ -1,8 +1,3 @@
-# from PyQt5.QtCore import QDir, Qt
-# from PyQt5.QtGui import QPalette, QPixmap
-# from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
-#                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
-#
 from PyQt5 import QtCore
 
 from PyQt5.QtCore import QDir, Qt

@@ -1,5 +1,4 @@
 import sys
-import cProfile
 
 from slide_analysis.UI.controller import Controller
 

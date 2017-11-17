@@ -1,8 +1,5 @@
 import os
-import pickle
-import datetime
 import numpy
-from slide_analysis.utils import get_descriptor_class_by_name
 
 
 class DescriptorDatabaseWriteService:
@@ -59,17 +56,3 @@ class DescriptorDatabaseWriteService:
             "img_width": img_w,
             "img_height": img_h
         }
-
-    @staticmethod
-    def from_database_example(path):
-        with open(path, 'rb') as file:
-            info_obj = pickle.load(file)
-
-            descriptor_class = get_descriptor_class_by_name(info_obj["descriptor_name"])
-            descriptor_params = info_obj["descriptor_params"]
-            path_to_descriptors = path.abspath(path.join(info_obj["image_path"], "../.."))
-            if descriptor_class is None:
-                return None
-
-            return DescriptorDatabaseWriteService(descriptor_class,
-                                                  descriptor_params, path_to_descriptors)
