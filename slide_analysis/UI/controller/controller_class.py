@@ -19,16 +19,12 @@ class Controller:
 
         self.app.installEventFilter(self.image_viewer)
         self.settings = QSettings("grad", "slide_analysis")
-        self.chosen_descriptor_idx = self.settings.value(CHOSEN_DESCRIPTOR_IDX,
-                                                         CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE,
-                                                         type=int)
-        self.descriptor_params = self.settings.value(DESCRIPTOR_PARAMS,
-                                                     DESCRIPTOR_PARAMS_DEFAULT_VALUE, type=tuple)
-        self.chosen_similarity_idx = self.settings.value(CHOSEN_SIMILARITY_IDX,
-                                                         CHOSEN_SIMILARITY_IDX_DEFAULT_VALUE,
-                                                         type=int)
-        self.similarity_params = self.settings.value(SIMILARITY_PARAMS,
-                                                     SIMILARITY_PARAMS_DEFAULT_VALUE, type=float)
+
+        self.settings.setValue(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE)
+        self.settings.setValue(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE)
+        self.settings.setValue(DESCRIPTOR_PARAMS, DESCRIPTOR_PARAMS_DEFAULT_VALUE)
+        self.settings.setValue(CHOSEN_SIMILARITY_IDX, CHOSEN_SIMILARITY_IDX_DEFAULT_VALUE)
+        self.settings.setValue(SIMILARITY_PARAMS, SIMILARITY_PARAMS_DEFAULT_VALUE)
         self.last_descriptor_database = None
         self.selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
 
