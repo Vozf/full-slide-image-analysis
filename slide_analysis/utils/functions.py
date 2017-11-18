@@ -1,8 +1,10 @@
 from functools import reduce
+
+import numpy
+import openslide
+
 from slide_analysis.descriptors import all_descriptors
 from slide_analysis.utils.tile_class import Tile
-import openslide
-import numpy
 
 
 def _compose_util(f, g):
