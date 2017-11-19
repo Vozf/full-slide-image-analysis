@@ -144,8 +144,9 @@ class FullslideViewer(QGraphicsView):
                     self.update_image_after_changing_level()
                     # self.scene().update()
                 elif factor < 1 and (
-                            image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[
-                    1] > 2):
+                                    image_rect.width() / viewrect[0] > 2 or image_rect.height() /
+                            viewrect[
+                                1] > 2):
                     self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_prev_image_level()
                     pixmap = QPixmap.fromImage(self.image_helper.get_q_image())

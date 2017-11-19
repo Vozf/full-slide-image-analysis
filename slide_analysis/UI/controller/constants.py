@@ -1,4 +1,4 @@
-DESCRIPTOR_DIRECTORY_PATH = '../descriptor_dumps'
+DESCRIPTOR_DIRECTORY_PATH = '../descriptor_dumps/'
 CHOSEN_N = 'top_n'
 CHOSEN_N_DEFAULT_VALUE = 10
 CHOSEN_DESCRIPTOR_IDX = 'descriptor'

@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import *
 from slide_analysis.UI.view.fullslide_viewer import FullslideViewer
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
-from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.view.ui_main_window import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
@@ -72,6 +72,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         if filepath:
             self.image_helper = ImageHelper(filepath)
             self.fullslide_viewer.set_image(self.image_helper)
+            self.controller.set_desc_path(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)

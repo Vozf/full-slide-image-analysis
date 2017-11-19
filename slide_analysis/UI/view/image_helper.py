@@ -1,9 +1,8 @@
 import openslide
 from PIL import ImageQt
-from PyQt5.QtCore import QRect
 
-from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
+from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
 class ImageHelper:
@@ -23,8 +22,9 @@ class ImageHelper:
         self.scale_factor = BASE_SCALE_FACTOR
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
                                       self.image_dimensions[1] // self.scale_factor)
-        self.image = self.openslide_image.read_region(self.current_displayed_image_part_coordinates, self.current_level,
-                                                      self.level_dimensions[self.current_level])
+        self.image = self.openslide_image.read_region(
+            self.current_displayed_image_part_coordinates, self.current_level,
+            self.level_dimensions[self.current_level])
         self.image_slide = openslide.ImageSlide(self.image)
         self.print_status()
 
@@ -32,8 +32,10 @@ class ImageHelper:
         return self.filename
 
     def get_tile_coordinates(self, mouse_pos_point):
-        actual_coordianates_x = int((mouse_pos_point.x()) * pow(2, self.current_level) + self.current_image_part_coordinates[0])
-        actual_coordianates_y = int((mouse_pos_point.y()) * pow(2, self.current_level) + self.current_image_part_coordinates[1])
+        actual_coordianates_x = int((mouse_pos_point.x()) * pow(2, self.current_level) +
+                                    self.current_image_part_coordinates[0])
+        actual_coordianates_y = int((mouse_pos_point.y()) * pow(2, self.current_level) +
+                                    self.current_image_part_coordinates[1])
         print('User selected tile coordinates: ', actual_coordianates_x, actual_coordianates_y)
         actual_coordianates = (actual_coordianates_x, actual_coordianates_y)
 
@@ -43,7 +45,8 @@ class ImageHelper:
             return 0, 0
 
     def get_qt_from_coordinates(self, tile_coordinates):
-        return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
+        return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, (
+        BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
@@ -65,8 +68,9 @@ class ImageHelper:
                          viewrect[1] / self.current_displayed_image_part_size[1])
             if factor > 1.25:
                 self.move_to_next_image_level()
-        self.image = self.openslide_image.read_region(self.current_displayed_image_part_coordinates, self.current_level,
-                                                      self.current_displayed_image_part_size)
+        self.image = self.openslide_image.read_region(
+            self.current_displayed_image_part_coordinates, self.current_level,
+            self.current_displayed_image_part_size)
         self.print_status()
         return ImageQt.ImageQt(self.image)
 
@@ -133,7 +137,8 @@ class ImageHelper:
         if self.current_level != 0:
             self.current_level -= 1
             self.current_displayed_image_part_size = (
-                self.current_displayed_image_part_size[0] * 2, self.current_displayed_image_part_size[1] * 2)
+                self.current_displayed_image_part_size[0] * 2,
+                self.current_displayed_image_part_size[1] * 2)
             self.update_image_rect()
             self.image = self.openslide_image.read_region(self.current_image_part_coordinates,
                                                           self.current_level,
@@ -150,8 +155,10 @@ class ImageHelper:
                    self.current_image_part_size[1] / self.current_displayed_image_part_size[1])
 
     def get_current_displayed_image_rect(self):
-        return ((self.current_displayed_image_part_coordinates[0] - self.current_image_part_coordinates[0]) // pow(2, self.current_level),
-                (self.current_displayed_image_part_coordinates[1] - self.current_image_part_coordinates[1]) // pow(2, self.current_level),
+        return ((self.current_displayed_image_part_coordinates[0] -
+                 self.current_image_part_coordinates[0]) // pow(2, self.current_level),
+                (self.current_displayed_image_part_coordinates[1] -
+                 self.current_image_part_coordinates[1]) // pow(2, self.current_level),
                 self.current_displayed_image_part_size[0],
                 self.current_displayed_image_part_size[1])
 
@@ -159,7 +166,8 @@ class ImageHelper:
         if self.current_level != self.openslide_image.level_count - 1:
             self.current_level += 1
             self.current_displayed_image_part_size = (
-                self.current_displayed_image_part_size[0] // 2, self.current_displayed_image_part_size[1] // 2)
+                self.current_displayed_image_part_size[0] // 2,
+                self.current_displayed_image_part_size[1] // 2)
             self.update_image_rect()
             self.image = self.openslide_image.read_region(self.current_image_part_coordinates,
                                                           self.current_level,

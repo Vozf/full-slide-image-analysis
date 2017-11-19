@@ -1,6 +1,6 @@
-import pickle
 import numpy
-from slide_analysis.utils import get_descriptor_class_by_name, DescriptorStream
+
+from slide_analysis.utils import get_descriptor_class_by_name
 
 
 class DescriptorDatabaseReadService:

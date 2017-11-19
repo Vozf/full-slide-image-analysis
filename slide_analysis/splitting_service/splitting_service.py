@@ -41,13 +41,3 @@ class SplittingService:
 
     def __len__(self):
         return self.num_rows * self.num_cols
-
-    @staticmethod
-    def get_tile_coords(index, tile_w, tile_h, step, img_w, img_h):
-        num_rows = int(img_h / step)
-        num_cols = int(img_w / step)
-        row = int(index / num_rows)
-        column = index - row * num_rows
-        y_coord = row * step
-        x_coord = column * step
-        return x_coord, y_coord
