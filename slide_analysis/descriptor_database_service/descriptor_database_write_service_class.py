@@ -20,7 +20,7 @@ class DescriptorDatabaseWriteService:
     @staticmethod
     def generate_name_of_basefile(base_path, image_path, descr_class, descr_params):
         image_name = os.path.basename(image_path)
-        return base_path + "/" + descr_class.__name__ + " " + str(
+        return base_path + descr_class.__name__ + " " + str(
             descr_params) + " " + image_name[0:image_name.find('.')] + ".npy"
 
     def create(self, tile_stream):
