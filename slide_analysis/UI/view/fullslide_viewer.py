@@ -29,7 +29,7 @@ class FullslideViewer(QGraphicsView):
         QGraphicsView.mousePressEvent(self, q_mouse_event)
 
     def mouseReleaseEvent(self, q_mouse_event):
-        if self.current_mouse_press_coordinates == q_mouse_event.pos():
+        if self.is_image_opened() and self.current_mouse_press_coordinates == q_mouse_event.pos():
             user_selected_coordinates = self.image_helper \
                 .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
 
