@@ -26,25 +26,27 @@ class FullslideViewer(QGraphicsView):
         self.current_mouse_press_coordinates = None
 
     def mousePressEvent(self, q_mouse_event):
-        self.current_mouse_press_coordinates = q_mouse_event.pos()
-        print(self.current_mouse_press_coordinates)
+        if self.image_helper is not None:
+            self.current_mouse_press_coordinates = q_mouse_event.pos()
+            print(self.current_mouse_press_coordinates)
         QGraphicsView.mousePressEvent(self, q_mouse_event)
 
     def mouseReleaseEvent(self, q_mouse_event):
-        if self.current_mouse_press_coordinates == q_mouse_event.pos():
-            user_selected_coordinates = self.image_helper \
-                .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
+        if self.image_helper is not None:
+            if self.current_mouse_press_coordinates == q_mouse_event.pos():
+                user_selected_coordinates = self.image_helper \
+                    .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
 
-            image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
-            self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
-            self.image_popup_widget.show()
-        else:
-            image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
-            self.image_helper.set_current_image_rect(image_rect)
-            self.image_helper.update_image_rect()
-            pixmap = QPixmap.fromImage(self.image_helper.update_q_image())
-            self._photo.setPixmap(pixmap)
-            self.update_image()
+                image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
+                self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
+                self.image_popup_widget.show()
+            else:
+                image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
+                self.image_helper.set_current_image_rect(image_rect)
+                self.image_helper.update_image_rect()
+                pixmap = QPixmap.fromImage(self.image_helper.update_q_image())
+                self._photo.setPixmap(pixmap)
+                self.update_image()
         QGraphicsView.mouseReleaseEvent(self, q_mouse_event)
 
 

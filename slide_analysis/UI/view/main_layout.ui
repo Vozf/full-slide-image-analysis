@@ -17,9 +17,15 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QScrollArea" name="topImagesScrollArea">
+      <property name="minimumSize">
+       <size>
+        <width>535</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>260</width>
+        <width>541</width>
         <height>16777215</height>
        </size>
       </property>
@@ -31,7 +37,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>258</width>
+         <width>539</width>
          <height>736</height>
         </rect>
        </property>
@@ -39,7 +45,11 @@
      </widget>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="fullslideImageLayout"/>
+     <layout class="QVBoxLayout" name="fullslideImageLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+     </layout>
     </item>
    </layout>
   </widget>
