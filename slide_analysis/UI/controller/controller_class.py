@@ -79,12 +79,16 @@ class Controller:
         imagepath = self.get_imagepath()
 
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
-        top_n = self.model.find_similar(tile, self.get_chosen_n(),
+        similarity_obj = self.model.find_similar(tile, self.get_chosen_n(),
                                         self.get_chosen_similarity_idx(),
                                         self.get_similarity_params())
+        top_n = similarity_obj["top_n"]
+        img_arr = similarity_obj["img_arr"]
         qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(
             tup), top_n))
+        img = self.image_viewer.image_helper.img_from_arr(img_arr)
         self.image_viewer.show_top_n(qts)
+        self.image_viewer.show_map(img)
 
     @staticmethod
     def _select_last_modified_file_in_folder():
