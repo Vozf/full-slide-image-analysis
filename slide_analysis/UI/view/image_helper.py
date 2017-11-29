@@ -1,4 +1,5 @@
 import openslide
+import time
 from PIL import ImageQt
 from PyQt5.QtCore import QRect
 
@@ -50,9 +51,6 @@ class ImageHelper:
                                       self.image_dimensions[1] // self.scale_factor)
         print('Current movement step:', self.current_movement_step)
 
-    # def set_current_coordinates(self, current_coordianates):
-    #     self.current_coordinates = current_coordianates
-
     def set_current_image_rect(self, view_rect):
         self.current_displayed_image_part_size = (int(view_rect.width()), int(view_rect.height()))
         self.current_displayed_image_part_coordinates = (
@@ -65,15 +63,15 @@ class ImageHelper:
                          viewrect[1] / self.current_displayed_image_part_size[1])
             if factor > 1.25:
                 self.move_to_next_image_level()
-        self.image = self.openslide_image.read_region(self.current_displayed_image_part_coordinates, self.current_level,
-                                                      self.current_displayed_image_part_size)
+        self.image = self.openslide_image.read_region(self.current_image_part_coordinates, self.current_level,
+                                                      self.current_image_part_size)
         self.print_status()
         return ImageQt.ImageQt(self.image)
 
     def update_image_rect(self):
 
-        offset = (self.current_displayed_image_part_size[0] * pow(2, self.current_level) // 2,
-                  self.current_displayed_image_part_size[1] * pow(2, self.current_level) // 2)
+        offset = (self.current_displayed_image_part_size[0] * pow(2, self.current_level),
+                  self.current_displayed_image_part_size[1] * pow(2, self.current_level))
 
         print(offset)
         print('previous')
@@ -93,8 +91,8 @@ class ImageHelper:
             self.current_image_part_coordinates = (self.current_image_part_coordinates[0], 0)
 
         self.current_image_part_size = (
-            self.current_displayed_image_part_size[0] * 2,
-            self.current_displayed_image_part_size[1] * 2)
+            self.current_displayed_image_part_size[0] * 3,
+            self.current_displayed_image_part_size[1] * 3)
 
         current_image_size = self.get_current_image_size()
         if self.current_image_part_size[0] > current_image_size[0]:
@@ -132,12 +130,21 @@ class ImageHelper:
     def move_to_next_image_level(self):
         if self.current_level != 0:
             self.current_level -= 1
+            millis1 = round(time.time() * 1000)
             self.current_displayed_image_part_size = (
                 self.current_displayed_image_part_size[0] * 2, self.current_displayed_image_part_size[1] * 2)
+            millis2 = round(time.time() * 1000)
+            print('set current_displayed_image_part_size ' + str(millis2 - millis1))
+            millis1 = round(time.time() * 1000)
             self.update_image_rect()
+            millis2 = round(time.time() * 1000)
+            print('update image rect ' + str(millis2 - millis1))
+            millis1 = round(time.time() * 1000)
             self.image = self.openslide_image.read_region(self.current_image_part_coordinates,
                                                           self.current_level,
                                                           self.current_image_part_size)
+            millis2 = round(time.time() * 1000)
+            print('read region ' + str(millis2 - millis1))
             # self.current_image_part_coordinates = (
             #     self.current_image_part_coordinates[0] + self.current_displayed_image_part_coordinates[0],
             #     self.current_image_part_coordinates[1] + self.current_displayed_image_part_coordinates[1])
