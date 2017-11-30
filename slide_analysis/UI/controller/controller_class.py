@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 import os
 import glob
 
-from slide_analysis.UI.view import ImageViewer
+from slide_analysis.UI.view import MainWindow
 from slide_analysis.UI.model import Model
 from slide_analysis.UI.controller.constants import *
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
@@ -14,7 +14,7 @@ class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
         self.model = Model()
-        self.image_viewer = ImageViewer(self, self.model)
+        self.image_viewer = MainWindow(self, self.model)
 
         self.app.installEventFilter(self.image_viewer)
         self.settings = QSettings("grad", "slide_analysis")
