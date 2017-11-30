@@ -1,3 +1,4 @@
+import time
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
@@ -19,6 +20,7 @@ class FullslideViewer(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFrameShape(QFrame.NoFrame)
+        self.setViewportUpdateMode(self.SmartViewportUpdate)
         self.controller = parent.controller
         self.image_popup_widget = None
         self.current_mouse_press_coordinates = None
@@ -37,6 +39,13 @@ class FullslideViewer(QGraphicsView):
             self.image_popup_widget = TilePreviewPopup(image_qt, self.controller,
                                                        user_selected_coordinates)
             self.image_popup_widget.show()
+        else:
+            image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
+            self.image_helper.set_current_image_rect(image_rect)
+            self.image_helper.update_image_rect()
+            pixmap = QPixmap.fromImage(self.image_helper.update_q_image())
+            self._photo.setPixmap(pixmap)
+            self.update_image()
         QGraphicsView.mouseReleaseEvent(self, q_mouse_event)
 
     # def resizeEvent(self, event: QResizeEvent):
@@ -113,7 +122,7 @@ class FullslideViewer(QGraphicsView):
     def zoomFactor(self):
         return self._zoom
 
-    def update_image_after_changing_level(self):
+    def update_image(self):
         self.fitInView()
         factor = self.image_helper.get_scale_factor()
         self.scale(factor, factor)
@@ -137,11 +146,20 @@ class FullslideViewer(QGraphicsView):
                     viewrect[1] < 0.5):
                     # print(image_rect)
                     self.image_helper.set_current_image_rect(image_rect)
+                    millis1 = round(time.time() * 1000)
                     self.image_helper.move_to_next_image_level()
-                    pixmap = QPixmap.fromImage(self.image_helper.get_current_image())
+                    millis2 = round(time.time() * 1000)
+                    print('move to next image level ' + str(millis2 - millis1))
 
+                    pixmap = QPixmap.fromImage(self.image_helper.get_current_image())
+                    millis1 = round(time.time() * 1000)
                     self._photo.setPixmap(pixmap)
-                    self.update_image_after_changing_level()
+                    millis2 = round(time.time() * 1000)
+                    print('set new pixmap ' + str(millis2 - millis1))
+                    millis1 = round(time.time() * 1000)
+                    self.update_image()
+                    millis2 = round(time.time() * 1000)
+                    print('update image ' + str(millis2 - millis1))
                     # self.scene().update()
                 elif factor < 1 and (
                                     image_rect.width() / viewrect[0] > 2 or image_rect.height() /
@@ -152,7 +170,7 @@ class FullslideViewer(QGraphicsView):
                     pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
 
                     self._photo.setPixmap(pixmap)
-                    self.update_image_after_changing_level()
+                    self.update_image()
                 else:
                     self.scale(factor, factor)
             elif self._zoom == 0:
