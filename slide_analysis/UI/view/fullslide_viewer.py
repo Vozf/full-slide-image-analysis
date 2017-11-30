@@ -16,9 +16,10 @@ class FullslideViewer(QGraphicsView):
         self._scene.addItem(self._photo)
         self.setScene(self._scene)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+        # self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # self.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
         self.setFrameShape(QFrame.NoFrame)
         self.setViewportUpdateMode(self.SmartViewportUpdate)
         self.controller = parent.controller
@@ -82,6 +83,8 @@ class FullslideViewer(QGraphicsView):
             # unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
             # self.scale(1 / unity.width(), 1 / unity.height())
             viewrect = self.viewport().rect()
+
+            self.setSceneRect(rect)
             scenerect = self.transform().mapRect(rect)
             factor = min(viewrect.width() / scenerect.width(),
                          viewrect.height() / scenerect.height())
@@ -152,7 +155,6 @@ class FullslideViewer(QGraphicsView):
                     self.image_helper.move_to_next_image_level()
                     millis2 = round(time.time() * 1000)
                     print('move to next image level ' + str(millis2 - millis1))
-
                     pixmap = QPixmap.fromImage(self.image_helper.get_current_image())
                     millis1 = round(time.time() * 1000)
                     self._photo.setPixmap(pixmap)
@@ -170,8 +172,8 @@ class FullslideViewer(QGraphicsView):
 
                     self._photo.setPixmap(pixmap)
                     self.update_image()
-                else:
-                    self.scale(factor, factor)
+
+                self.scale(factor, factor)
             elif self._zoom == 0:
                 self.image_helper.set_current_image_rect(image_rect)
                 self.fitInView()

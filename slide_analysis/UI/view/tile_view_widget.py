@@ -10,11 +10,11 @@ class TilePreviewPopup(QLabel):
         super().__init__()
         self.controller = controller
         self.coordinates = coordinates
-        self.tile_label = QLabel(self)
         pixmap = QPixmap.fromImage(tile)
-        self.tile_label.setPixmap(pixmap)
+        self.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
         position = self.cursor().pos()
+        self.setMouseTracking(True)
         self.move(position)
         self.setWindowFlags(Qt.WindowStaysOnTopHint
                             | Qt.FramelessWindowHint)
@@ -23,13 +23,16 @@ class TilePreviewPopup(QLabel):
     #     """ When the mouse leave this widget, destroy it. """
     #     self.destroy()
 
+    def mouseMoveEvent(self, event):
+        self.destroy()
+
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Space:
             if self.controller.last_descriptor_database is None:
                 # todo add popup
                 print("there should be popup to select descriptor database")
             self.controller.find_similar(self.coordinates)
-            self.close()
+            self.destroy()
             event.accept()
         else:
             super().keyPressEvent(event)
