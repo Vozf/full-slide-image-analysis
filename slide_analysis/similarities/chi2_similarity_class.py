@@ -1,4 +1,5 @@
 import numpy as np
+from slide_analysis.descriptors import COLOR_RANGE
 
 
 class Chi2Similarity:
@@ -6,7 +7,7 @@ class Chi2Similarity:
         self.eps = eps
 
     def compare(self, descriptors_array, hist):
-        distance = 0.5 * np.sum(
+        distances = 0.5 * np.sum(
             (descriptors_array - hist) ** 2 / (descriptors_array + hist + self.eps), axis=1)
 
-        return 1 / (1 + distance)
+        return 1 - distances / (np.sqrt(2) * COLOR_RANGE ** 2)
