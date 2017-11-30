@@ -1,4 +1,5 @@
 import numpy as np
+from slide_analysis.descriptors import COLOR_RANGE
 
 
 class EuclideanSimilarity:
@@ -6,4 +7,5 @@ class EuclideanSimilarity:
         pass
 
     def compare(self, descriptors_array, hist):
-        return 1 / (1 + np.linalg.norm(descriptors_array - hist, axis=1))
+        distances = np.linalg.norm(descriptors_array - hist, axis=1)
+        return 1 - distances / (np.sqrt(2) * COLOR_RANGE ** 2)

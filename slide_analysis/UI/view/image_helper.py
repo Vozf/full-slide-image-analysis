@@ -1,5 +1,6 @@
 import openslide
 from PIL import ImageQt
+from PIL import Image
 
 from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
@@ -47,6 +48,11 @@ class ImageHelper:
     def get_qt_from_coordinates(self, tile_coordinates):
         return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, (
         BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
+
+    def img_from_arr(self, arr):
+        print("---------- CREATING IMG FROM ARR -------------")
+        shape = arr.shape
+        return Image.fromarray(arr.reshape([shape[1], shape[0], shape[2]]), 'RGB')
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,

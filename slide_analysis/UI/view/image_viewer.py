@@ -60,6 +60,9 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
             label.setPixmap(pixmap)
             self.imageVerticalLayout.addWidget(label)
 
+    def show_map(self, map):
+        map.show()
+
     def is_image_opened(self):
         return self.image_helper is not None
 
