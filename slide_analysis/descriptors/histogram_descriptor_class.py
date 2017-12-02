@@ -1,5 +1,6 @@
 import numpy
 from slide_analysis.descriptors.constants import *
+from concurrent.futures import ProcessPoolExecutor
 
 
 class HistogramDescriptor:
@@ -15,11 +16,6 @@ class HistogramDescriptor:
         return value
 
     def get_descriptor_array(self, tile_stream):
-        self.desc_arr = numpy.empty([len(tile_stream), COLOR_RANGE], dtype=int)
-        self.iteration = 0
-        tile_stream.for_each(lambda tile: self._put_to_arr(self.calc(tile)))
-        return self.desc_arr
-
-    def _put_to_arr(self, desc):
-        self.desc_arr[self.iteration] = desc
-        self.iteration += 1
+        with ProcessPoolExecutor() as executor:
+            self.descr_arr = list(executor.map(self.calc, tile_stream))
+            return self.descr_arr

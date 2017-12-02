@@ -3,6 +3,7 @@ from slide_analysis.similarities import all_similarities
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService
 from slide_analysis.splitting_service import SplittingService
 from slide_analysis.search_service import SearchService
+from threading import Thread
 
 
 class Model:
@@ -11,13 +12,20 @@ class Model:
         self.similarities = all_similarities
 
     def calculate_descriptors(self, descriptor_idx, descriptor_params, imagepath, directory_path):
+        thread = Thread(target=self.calculate_descriptors_task,
+                        args=(descriptor_idx, descriptor_params, imagepath, directory_path))
+        thread.daemon = True
+        thread.start()
+
+    def calculate_descriptors_task(self, descriptor_idx, descriptor_params, imagepath, directory_path):
         split = SplittingService()
         stream = split.split_to_tiles(imagepath)
 
         descriptor_database_service = \
             DescriptorDatabaseWriteService(self.descriptors[descriptor_idx], descriptor_params,
                                            directory_path)
-        return descriptor_database_service.create(stream)
+        descriptor_base = descriptor_database_service.create(stream)
+        self.init_search_service(descriptor_base)
 
     def init_search_service(self, desc_path):
         self.search_service = SearchService(desc_path)
