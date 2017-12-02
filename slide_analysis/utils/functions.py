@@ -2,6 +2,7 @@ from functools import reduce
 from slide_analysis.descriptors import all_descriptors
 from slide_analysis.utils.tile_class import Tile
 import openslide
+import numpy
 
 
 def _compose_util(f, g):
@@ -20,3 +21,12 @@ def get_tile_from_coordinates(path, x_coord, y_coord, width, height):
     return Tile(x_coord, y_coord, width, height,
                 openslide.open_slide(path).read_region((x_coord, y_coord), 0,
                                                        (width, height)))
+
+
+def get_tiles_coords_from_indexes(indexes, step, img_w):
+    num_cols = int(img_w / step)
+    row = (indexes / num_cols).astype(int)
+    column = indexes - row * num_cols
+    y_coord = row * step
+    x_coord = column * step
+    return numpy.array([x_coord, y_coord]).T
