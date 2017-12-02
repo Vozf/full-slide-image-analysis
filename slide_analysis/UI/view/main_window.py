@@ -67,6 +67,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if filepath:
             self.image_helper = ImageHelper(filepath)
             self.fullslide_viewer.set_image(self.image_helper)
+            self.controller.set_desc_path(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)
