@@ -16,10 +16,8 @@ class ImageDisplay(QGraphicsView):
         self._scene.addItem(self._photo)
         self.setScene(self._scene)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        # self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # self.setAlignment(Qt.AlignLeading | Qt.AlignLeft | Qt.AlignTop)
         self.setFrameShape(QFrame.NoFrame)
         self.setViewportUpdateMode(self.SmartViewportUpdate)
         self.controller = parent.controller
@@ -60,16 +58,12 @@ class ImageDisplay(QGraphicsView):
     def fitInView(self, **kwargs):
         rect = QRectF(self._photo.pixmap().rect())
         if not rect.isNull():
-            # unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
-            # self.scale(1 / unity.width(), 1 / unity.height())
             viewrect = self.viewport().rect()
 
             self.setSceneRect(rect)
             scenerect = self.transform().mapRect(rect)
             factor = min(viewrect.width() / scenerect.width(),
                          viewrect.height() / scenerect.height())
-            # if factor <= 0.8:
-            #     self.move_to_next_image_level()
             self.scale(factor, factor)
             self.centerOn(rect.center())
 
@@ -81,7 +75,6 @@ class ImageDisplay(QGraphicsView):
 
     def set_image(self, image_helper):
         self._zoom = 0
-        # self._scene.clear()
         self.image_helper = image_helper
         viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
         pixmap = QPixmap.fromImage(self.image_helper.update_q_image(viewrect))

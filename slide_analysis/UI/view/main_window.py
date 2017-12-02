@@ -100,8 +100,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.open_act.triggered.connect(self.open)
 
         self.exit_act = QAction("E&xit", self)
-        # , shortcut="Ctrl+Q",
-        # triggered=self.close)
         self.exit_act.setShortcut("Ctrl+Q")
         self.exit_act.triggered.connect(self.close)
 
@@ -158,7 +156,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.help_menu.addAction(self.about_qt_act)
 
         self.menuBar().addMenu(self.file_menu)
-        # self.menuBar().addMenu(self.view_menu)
-        # self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.help_menu)
