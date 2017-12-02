@@ -6,18 +6,18 @@ from PyQt5.QtWidgets import QLabel
 
 
 class TilePreviewPopup(QLabel):
-    def __init__(self, tile, controller):
+    def __init__(self, tile, controller, coordinates):
         super().__init__()
         self.controller = controller
+        self.coordinates = coordinates
         self.tile_label = QLabel(self)
         pixmap = QPixmap.fromImage(tile)
         self.tile_label.setPixmap(pixmap)
         self.resize(pixmap.width(), pixmap.height())
         position = self.cursor().pos()
         self.move(position)
-        self.setWindowFlags(Qt.Popup | Qt.WindowStaysOnTopHint
-                            | Qt.FramelessWindowHint
-                            | Qt.X11BypassWindowManagerHint)
+        self.setWindowFlags(Qt.WindowStaysOnTopHint
+                            | Qt.FramelessWindowHint)
 
     # def leaveEvent(self, event):
     #     """ When the mouse leave this widget, destroy it. """
@@ -28,7 +28,7 @@ class TilePreviewPopup(QLabel):
             if self.controller.descriptor_database is None:
                 # todo add popup
                 print("there should be popup to select descriptor database")
-            self.controller.find_similar()
+            self.controller.find_similar(self.coordinates)
             self.close()
             event.accept()
         else:
