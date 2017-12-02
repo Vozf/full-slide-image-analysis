@@ -2,23 +2,23 @@ from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 
-from slide_analysis.UI.view.fullslide_viewer import FullslideViewer
+from slide_analysis.UI.view.image_display import ImageDisplay
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
 from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
-class ImageViewer(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, controller, model):
-        super(ImageViewer, self).__init__()
+        super(MainWindow, self).__init__()
         self.showMaximized()
         self.model = model
         self.controller = controller
         self.image_helper = None
 
         self.setupUi(self)
-        self.fullslide_viewer = FullslideViewer(self)
+        self.fullslide_viewer = ImageDisplay(self)
         self.fullslideImageLayout.addWidget(self.fullslide_viewer)
 
         self.imageVerticalLayout = QGridLayout(self.topImagesScrollAreaWidgetContents)
@@ -60,6 +60,7 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         if filepath:
             self.image_helper = ImageHelper(filepath)
             self.fullslide_viewer.set_image(self.image_helper)
+            self.controller.set_desc_path(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)

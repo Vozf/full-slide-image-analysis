@@ -1,7 +1,5 @@
 import os
-import pickle
-import datetime
-from slide_analysis.utils import compose, get_descriptor_class_by_name, DescriptorDump
+import numpy
 
 
 class DescriptorDatabaseWriteService:
@@ -16,59 +14,46 @@ class DescriptorDatabaseWriteService:
 
     @staticmethod
     def _dump_obj(file, obj):
-        return pickle.dump(obj, file)
+        return numpy.save(file, obj)
+
+    @staticmethod
+    def generate_name_of_basefile(base_path, image_path, descr_class, descr_params):
+        image_name = os.path.basename(image_path)
+        return base_path + descr_class.__name__ + " " + str(
+            descr_params) + " " + image_name[0:image_name.find('.')] + ".npy"
 
     #todo move making of descr_filename somewhere else, so it can be accessed and modified
     def create(self, tile_stream):
-        image_path = tile_stream.splitting_service.path
+        split = tile_stream.splitting_service
+        image_path = split.path
         length = len(tile_stream)
-
-        image_name = os.path.basename(image_path)
-
-        descr_filename = self.base_path + str(datetime.datetime.now()).split('.')[
-            0] + " " + self.descriptor_class.__name__ + " " + str(
-            self.descriptor_params) + " " + image_name[0:image_name.find('.')] + ".bin"
+        descr_filename = self.generate_name_of_basefile(self.base_path, image_path,
+                                                        self.descriptor_class,
+                                                        self.descriptor_params)
 
         if not os.path.exists(self.base_path):
             os.makedirs(self.base_path)
 
         descr = self.descriptor_class(self.descriptor_params)
-
-        info_obj = self.generate_database_info(image_path, length)
+        info_obj = self.generate_database_info(image_path, length, split.tile_width,
+                                               split.tile_height, split.step,
+                                               split.width, split.height)
 
         with open(descr_filename, 'wb') as file:
             self._dump_obj(file, info_obj)
-            tile_stream.for_each(compose(
-                lambda descriptor: self._dump_obj(file, descriptor),
-                self.generate_dump_obj(descr)))
+            self._dump_obj(file, descr.get_descriptor_array(tile_stream))
 
         return descr_filename
 
-    def generate_database_info(self, image_path, length):
+    def generate_database_info(self, image_path, length, tile_w, tile_h, step, img_w, img_h):
         return {
             "descriptor_name": self.descriptor_class.__name__,
             "descriptor_params": self.descriptor_params,
             "image_path": image_path,
-            "length": length
+            "length": length,
+            "tile_width": tile_w,
+            "tile_height": tile_h,
+            "step": step,
+            "img_width": img_w,
+            "img_height": img_h
         }
-
-    @staticmethod
-    def from_database_example(path):
-        with open(path, 'rb') as file:
-            info_obj = pickle.load(file)
-
-            descriptor_class = get_descriptor_class_by_name(info_obj["descriptor_name"])
-            descriptor_params = info_obj["descriptor_params"]
-            path_to_descriptors = path.abspath(path.join(info_obj["image_path"], "../.."))
-            if descriptor_class is None:
-                return None
-
-            return DescriptorDatabaseWriteService(descriptor_class,
-                                                  descriptor_params, path_to_descriptors)
-
-    @staticmethod
-    def generate_dump_obj(descr):
-        def generate_dump_obj_util(tile):
-            return DescriptorDump(tile.x, tile.y, tile.height, tile.width, descr.calc(tile))
-
-        return generate_dump_obj_util
