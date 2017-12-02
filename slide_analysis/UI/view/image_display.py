@@ -16,7 +16,6 @@ class ImageDisplay(QGraphicsView):
         self._scene.addItem(self._photo)
         self.setScene(self._scene)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setFrameShape(QFrame.NoFrame)
@@ -26,25 +25,27 @@ class ImageDisplay(QGraphicsView):
         self.current_mouse_press_coordinates = None
 
     def mousePressEvent(self, q_mouse_event):
-        self.current_mouse_press_coordinates = q_mouse_event.pos()
-        print(self.current_mouse_press_coordinates)
+        if self.image_helper is not None:
+            self.current_mouse_press_coordinates = q_mouse_event.pos()
+            print(self.current_mouse_press_coordinates)
         QGraphicsView.mousePressEvent(self, q_mouse_event)
 
     def mouseReleaseEvent(self, q_mouse_event):
-        if self.current_mouse_press_coordinates == q_mouse_event.pos():
-            user_selected_coordinates = self.image_helper \
-                .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
+        if self.image_helper is not None:
+            if self.current_mouse_press_coordinates == q_mouse_event.pos():
+                user_selected_coordinates = self.image_helper \
+                    .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
 
-            image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
-            self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
-            self.image_popup_widget.show()
-        else:
-            image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
-            self.image_helper.set_current_image_rect(image_rect)
-            self.image_helper.update_image_rect()
-            pixmap = QPixmap.fromImage(self.image_helper.update_q_image())
-            self._photo.setPixmap(pixmap)
-            self.update_image()
+                image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
+                self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
+                self.image_popup_widget.show()
+            else:
+                image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
+                self.image_helper.set_current_image_rect(image_rect)
+                self.image_helper.update_image_rect()
+                pixmap = QPixmap.fromImage(self.image_helper.update_q_image())
+                self._photo.setPixmap(pixmap)
+                self.update_image()
         QGraphicsView.mouseReleaseEvent(self, q_mouse_event)
 
     def mouseMoveEvent(self, q_mouse_event):
@@ -57,14 +58,12 @@ class ImageDisplay(QGraphicsView):
     def fitInView(self, **kwargs):
         rect = QRectF(self._photo.pixmap().rect())
         if not rect.isNull():
-            # unity = self.transform().mapRect(QRectF(0, 0, 1, 1))
-            # self.scale(1 / unity.width(), 1 / unity.height())
             viewrect = self.viewport().rect()
+
+            self.setSceneRect(rect)
             scenerect = self.transform().mapRect(rect)
             factor = min(viewrect.width() / scenerect.width(),
                          viewrect.height() / scenerect.height())
-            # if factor <= 0.8:
-            #     self.move_to_next_image_level()
             self.scale(factor, factor)
             self.centerOn(rect.center())
 
@@ -76,7 +75,6 @@ class ImageDisplay(QGraphicsView):
 
     def set_image(self, image_helper):
         self._zoom = 0
-        # self._scene.clear()
         self.image_helper = image_helper
         viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
         pixmap = QPixmap.fromImage(self.image_helper.update_q_image(viewrect))
@@ -96,7 +94,6 @@ class ImageDisplay(QGraphicsView):
         factor = self.image_helper.get_scale_factor()
         self.scale(factor, factor)
         rect_tuple = self.image_helper.get_current_displayed_image_rect()
-        print(rect_tuple[0], rect_tuple[1])
         self.ensureVisible(rect_tuple[0], rect_tuple[1], rect_tuple[2], rect_tuple[3], 0, 0)
 
     def wheelEvent(self, event):
