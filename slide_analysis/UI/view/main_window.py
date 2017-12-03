@@ -3,7 +3,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.view.image_display import ImageDisplay
-from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
 from slide_analysis.UI.view.ui_main_window import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
@@ -56,10 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def open(self):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         print("filepath:", filepath)
-        if filepath:
-            self.image_helper = ImageHelper(filepath)
-            self.fullslide_viewer.set_image(self.image_helper)
-            self.controller.set_desc_path(filepath)
+        self.controller.open_filepath(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)

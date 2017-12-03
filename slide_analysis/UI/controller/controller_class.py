@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QApplication
 from slide_analysis.UI.controller.constants import *
 from slide_analysis.UI.model import Model
 from slide_analysis.UI.view import MainWindow
+from slide_analysis.UI.view import ImageHelper
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService \
     as DDWS
@@ -28,6 +29,10 @@ class Controller:
         window_state = self.settings.value(WINDOW_STATE)
         if window_state is not None:
             self.image_viewer.restoreState(window_state)
+
+        last_image = self.settings.value(LAST_IMAGE)
+        if last_image is not None:
+            self.open_filepath(last_image)
 
         self.descriptor_database = None
         self.selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
@@ -110,3 +115,12 @@ class Controller:
     def close_event(self):
         self.settings.setValue(GEOMETRY, self.image_viewer.saveGeometry())
         self.settings.setValue(WINDOW_STATE, self.image_viewer.saveState())
+
+    def open_filepath(self, filepath):
+        if not filepath:
+            return
+        self.image_viewer.image_helper = ImageHelper(filepath)
+        self.image_viewer.fullslide_viewer.set_image(self.image_viewer.image_helper)
+        self.set_desc_path(filepath)
+
+        self.settings.setValue(LAST_IMAGE, filepath)
