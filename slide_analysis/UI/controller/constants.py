@@ -1,5 +1,8 @@
 DESCRIPTOR_DIRECTORY_PATH = '../descriptor_dumps/'
 CHOSEN_N = 'top_n'
+GEOMETRY = 'geometry'
+WINDOW_STATE = 'window_state'
+LAST_IMAGE = 'last_image'
 CHOSEN_N_DEFAULT_VALUE = 10
 CHOSEN_DESCRIPTOR_IDX = 'descriptor'
 CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE = 0

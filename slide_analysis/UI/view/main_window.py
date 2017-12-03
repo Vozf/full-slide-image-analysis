@@ -3,7 +3,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.view.image_display import ImageDisplay
-from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
 from slide_analysis.UI.view.ui_main_window import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
@@ -12,7 +11,6 @@ from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, controller, model):
         super(MainWindow, self).__init__()
-        self.showMaximized()
         self.model = model
         self.controller = controller
         self.image_helper = None
@@ -57,10 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def open(self):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
         print("filepath:", filepath)
-        if filepath:
-            self.image_helper = ImageHelper(filepath)
-            self.fullslide_viewer.set_image(self.image_helper)
-            self.controller.set_desc_path(filepath)
+        self.controller.open_filepath(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)
@@ -130,7 +125,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.calculate_descriptor_act = QAction("Calculate")
         self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
 
-        self.settings_act = QAction("Settings")
+        self.settings_act = QAction("Se&ttings")
+        self.settings_act.setShortcut("Ctrl+T")
         self.settings_act.triggered.connect(self.show_settings)
 
     def show_settings(self):
@@ -158,3 +154,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.menuBar().addMenu(self.file_menu)
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.help_menu)
+
+    def closeEvent(self, QCloseEvent):
+        self.controller.close_event()
+        QMainWindow.closeEvent(self, QCloseEvent)
