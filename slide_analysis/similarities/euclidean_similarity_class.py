@@ -1,4 +1,5 @@
 import numpy as np
+
 from slide_analysis.descriptors import COLOR_RANGE
 
 

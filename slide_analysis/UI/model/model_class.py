@@ -1,9 +1,10 @@
+import numpy
+
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService
 from slide_analysis.descriptors import all_descriptors
 from slide_analysis.search_service import SearchService
 from slide_analysis.similarities import all_similarities
 from slide_analysis.splitting_service import SplittingService
-import numpy
 
 
 class Model:
@@ -37,8 +38,9 @@ class Model:
         return img_arr.reshape([shape[0], shape[1], 3])
 
     def find_similar(self, tile, n, similarity_class_idx, similarity_class_params):
-        similarity_obj = self.search_service.search(tile, n, self.similarities[similarity_class_idx],
-                                          similarity_class_params)
+        similarity_obj = self.search_service.search(tile, n,
+                                                    self.similarities[similarity_class_idx],
+                                                    similarity_class_params)
         sim_map = similarity_obj["sim_map"]
         return {
             "top_n": similarity_obj["top_n"],

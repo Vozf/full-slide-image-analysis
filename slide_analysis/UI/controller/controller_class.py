@@ -4,11 +4,9 @@ import os
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
 
-from slide_analysis.UI.view import MainWindow
-from slide_analysis.UI.model import Model
 from slide_analysis.UI.controller.constants import *
 from slide_analysis.UI.model import Model
-from slide_analysis.UI.view import ImageViewer
+from slide_analysis.UI.view import MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService \
     as DDWS
@@ -82,8 +80,8 @@ class Controller:
 
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
         similarity_obj = self.model.find_similar(tile, self.get_chosen_n(),
-                                        self.get_chosen_similarity_idx(),
-                                        self.get_similarity_params())
+                                                 self.get_chosen_similarity_idx(),
+                                                 self.get_similarity_params())
         top_n = similarity_obj["top_n"]
         img_arr = similarity_obj["img_arr"]
         qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(

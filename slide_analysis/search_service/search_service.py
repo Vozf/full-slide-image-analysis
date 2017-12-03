@@ -19,8 +19,8 @@ class SearchService:
 
     def get_map(self, sims):
         return sims.reshape(get_similarity_map_shape(self.info_obj['img_width'],
-                                 self.info_obj['img_height'],
-                                 self.info_obj['step']))
+                                                     self.info_obj['img_height'],
+                                                     self.info_obj['step']))
 
     def search(self, tile, n, similarity_class, similarity_class_params):
         tile_descriptor = self.tile_descriptor_class.calc(tile)

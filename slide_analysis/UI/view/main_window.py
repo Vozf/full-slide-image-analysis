@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import *
 from slide_analysis.UI.view.image_display import ImageDisplay
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
-from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
 from slide_analysis.UI.view.ui_main_window import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
@@ -41,7 +40,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for tile in tiles:
             label = QLabel()
             pixmap = QPixmap.fromImage(tile)
-            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatioByExpanding)
+            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT,
+                                   Qt.KeepAspectRatioByExpanding)
             label.setPixmap(pixmap)
             self.imageVerticalLayout.addWidget(label, row, col)
             col += 1
