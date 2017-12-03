@@ -117,8 +117,8 @@ class Controller:
     def open_filepath(self, filepath):
         if not filepath:
             return
-        self.image_viewer.image_helper = ImageHelper(filepath)
-        self.image_viewer.fullslide_viewer.set_image(self.image_viewer.image_helper)
+        self.main_window.image_helper = ImageHelper(filepath)
+        self.main_window.fullslide_viewer.set_image(self.image_viewer.image_helper)
         self.set_desc_path(filepath)
 
         self.settings.setValue(LAST_IMAGE, filepath)
