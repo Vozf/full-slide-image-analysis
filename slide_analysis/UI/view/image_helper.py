@@ -1,10 +1,8 @@
 import openslide
-import time
 from PIL import ImageQt
-from PyQt5.QtCore import QRect
 
+from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
-from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR, SCALE_MULTIPLIER
 
 
 class ImageHelper:
@@ -32,8 +30,10 @@ class ImageHelper:
         return self.filepath
 
     def get_tile_coordinates(self, mouse_pos_point):
-        actual_coordianates_x = int((mouse_pos_point.x()) * pow(2, self.current_level) + self.current_image_coordinates[0])
-        actual_coordianates_y = int((mouse_pos_point.y()) * pow(2, self.current_level) + self.current_image_coordinates[1])
+        actual_coordianates_x = int(
+            (mouse_pos_point.x()) * pow(2, self.current_level) + self.current_image_coordinates[0])
+        actual_coordianates_y = int(
+            (mouse_pos_point.y()) * pow(2, self.current_level) + self.current_image_coordinates[1])
         print('User selected tile coordinates: ', actual_coordianates_x, actual_coordianates_y)
         actual_coordianates = (actual_coordianates_x, actual_coordianates_y)
 
@@ -43,7 +43,8 @@ class ImageHelper:
             return 0, 0
 
     def get_qt_from_coordinates(self, tile_coordinates):
-        return ImageQt.ImageQt(self.openslide_image.read_region(tile_coordinates, 0, (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
+        return ImageQt.ImageQt(
+            self.openslide_image.read_region(tile_coordinates, 0, (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
@@ -127,10 +128,11 @@ class ImageHelper:
                    self.current_image_size[1] / self.current_displayed_image_size[1])
 
     def get_current_displayed_image_rect(self):
-        return ((self.current_displayed_image_coordinates[0] - self.current_image_coordinates[0]) // pow(2, self.current_level),
-                (self.current_displayed_image_coordinates[1] - self.current_image_coordinates[1]) // pow(2, self.current_level),
-                self.current_displayed_image_size[0],
-                self.current_displayed_image_size[1])
+        return (
+        (self.current_displayed_image_coordinates[0] - self.current_image_coordinates[0]) // pow(2, self.current_level),
+        (self.current_displayed_image_coordinates[1] - self.current_image_coordinates[1]) // pow(2, self.current_level),
+        self.current_displayed_image_size[0],
+        self.current_displayed_image_size[1])
 
     def move_to_prev_image_level(self):
         if self.current_level != self.openslide_image.level_count - 1:

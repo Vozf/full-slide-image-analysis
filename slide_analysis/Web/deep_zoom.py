@@ -18,14 +18,15 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-from flask import Flask, abort, make_response, render_template, url_for
+import re
 from io import BytesIO
+from optparse import OptionParser
+from unicodedata import normalize
+
 import openslide
+from flask import Flask, abort, make_response, render_template, url_for
 from openslide import ImageSlide, open_slide
 from openslide.deepzoom import DeepZoomGenerator
-from optparse import OptionParser
-import re
-from unicodedata import normalize
 
 DEEPZOOM_SLIDE = None
 DEEPZOOM_FORMAT = 'jpeg'
@@ -168,4 +169,3 @@ if __name__ == '__main__':
             parser.error('No slide file specified')
 
     app.run(host=opts.host, port=opts.port, threaded=True)
-

@@ -1,2 +1,4 @@
-from slide_analysis.descriptor_database_service.descriptor_database_write_service_class import DescriptorDatabaseWriteService
-from slide_analysis.descriptor_database_service.descriptor_database_read_service_class import DescriptorDatabaseReadService
+from slide_analysis.descriptor_database_service.descriptor_database_read_service_class import \
+    DescriptorDatabaseReadService
+from slide_analysis.descriptor_database_service.descriptor_database_write_service_class import \
+    DescriptorDatabaseWriteService
