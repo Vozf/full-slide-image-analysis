@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.topImagesScrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.topImagesScrollArea.setMinimumSize(QtCore.QSize(535, 0))
+        self.topImagesScrollArea.setMinimumSize(QtCore.QSize(260, 0))
         self.topImagesScrollArea.setMaximumSize(QtCore.QSize(541, 16777215))
         self.topImagesScrollArea.setWidgetResizable(True)
         self.topImagesScrollArea.setObjectName("topImagesScrollArea")

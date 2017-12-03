@@ -22,11 +22,13 @@ class Controller:
         self.app.installEventFilter(self.image_viewer)
         self.settings = QSettings("grad", "slide_analysis")
 
-        self.settings.setValue(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE)
-        self.settings.setValue(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE)
-        self.settings.setValue(DESCRIPTOR_PARAMS, DESCRIPTOR_PARAMS_DEFAULT_VALUE)
-        self.settings.setValue(CHOSEN_SIMILARITY_IDX, CHOSEN_SIMILARITY_IDX_DEFAULT_VALUE)
-        self.settings.setValue(SIMILARITY_PARAMS, SIMILARITY_PARAMS_DEFAULT_VALUE)
+        geometry = self.settings.value(GEOMETRY)
+        if geometry is not None:
+            self.image_viewer.restoreGeometry(geometry)
+        window_state = self.settings.value(WINDOW_STATE)
+        if window_state is not None:
+            self.image_viewer.restoreState(window_state)
+
         self.descriptor_database = None
         self.selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
 
@@ -104,3 +106,7 @@ class Controller:
             self.model.init_search_service(descr_base_path)
         else:
             print('----- There is no calculated descriptors for chosen params -----')
+
+    def close_event(self):
+        self.settings.setValue(GEOMETRY, self.image_viewer.saveGeometry())
+        self.settings.setValue(WINDOW_STATE, self.image_viewer.saveState())

@@ -12,7 +12,6 @@ from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, controller, model):
         super(MainWindow, self).__init__()
-        self.showMaximized()
         self.model = model
         self.controller = controller
         self.image_helper = None
@@ -130,7 +129,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.calculate_descriptor_act = QAction("Calculate")
         self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
 
-        self.settings_act = QAction("Settings")
+        self.settings_act = QAction("Se&ttings")
+        self.settings_act.setShortcut("Ctrl+T")
         self.settings_act.triggered.connect(self.show_settings)
 
     def show_settings(self):
@@ -158,3 +158,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.menuBar().addMenu(self.file_menu)
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.help_menu)
+
+    def closeEvent(self, QCloseEvent):
+        self.controller.close_event()
+        QMainWindow.closeEvent(self, QCloseEvent)
