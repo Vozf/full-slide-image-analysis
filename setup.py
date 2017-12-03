@@ -11,6 +11,6 @@ setuptools.setup(name='slide_analysis',
                  license='???',  # todo: add
                  description='???',  # todo: add
                  packages=setuptools.find_packages(exclude=['doc']),
-                 scripts=['slide_analysis/slide_analysis'],  # todo: rename
+                 scripts=['slide_analysis/slide_analysis'],
                  install_requires=INSTALL_REQUIRES,
                  )

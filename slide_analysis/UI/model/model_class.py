@@ -1,8 +1,8 @@
-from slide_analysis.descriptors import all_descriptors
-from slide_analysis.similarities import all_similarities
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService
-from slide_analysis.splitting_service import SplittingService
+from slide_analysis.descriptors import all_descriptors
 from slide_analysis.search_service import SearchService
+from slide_analysis.similarities import all_similarities
+from slide_analysis.splitting_service import SplittingService
 
 
 class Model:
@@ -24,4 +24,4 @@ class Model:
 
     def find_similar(self, tile, n, similarity_class_idx, similarity_class_params):
         return self.search_service.search(tile, n, self.similarities[similarity_class_idx],
-                                               similarity_class_params)
+                                          similarity_class_params)

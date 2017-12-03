@@ -1,4 +1,3 @@
-import time
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
