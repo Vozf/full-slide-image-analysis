@@ -1,4 +1,3 @@
-import time
 from PyQt5.QtCore import Qt, QRectF
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGraphicsPixmapItem
@@ -37,7 +36,8 @@ class ImageDisplay(QGraphicsView):
                     .get_tile_coordinates(self.mapToScene(q_mouse_event.pos()))
 
                 image_qt = self.image_helper.get_qt_from_coordinates(user_selected_coordinates)
-                self.image_popup_widget = TilePreviewPopup(image_qt, self.controller, user_selected_coordinates)
+                self.image_popup_widget = TilePreviewPopup(image_qt, self.controller,
+                                                           user_selected_coordinates)
                 self.image_popup_widget.show()
             else:
                 image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
@@ -107,13 +107,17 @@ class ImageDisplay(QGraphicsView):
                 factor = 0.8
                 self._zoom -= 1
             if self._zoom > 0:
-                if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[1] < 0.5):
+                if factor > 1 and (
+                        image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[
+                    1] < 0.5):
                     self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_next_image_level()
                     pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
                     self._photo.setPixmap(pixmap)
                     self.update_image()
-                elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
+                elif factor < 1 and (
+                        image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[
+                    1] > 2):
                     self.image_helper.set_current_image_rect(image_rect)
                     self.image_helper.move_to_prev_image_level()
                     pixmap = QPixmap.fromImage(self.image_helper.get_q_image())

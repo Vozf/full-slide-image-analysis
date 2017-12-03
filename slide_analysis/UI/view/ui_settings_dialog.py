@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'slide_analysis/UI/view/settings_dialog.ui'
+# Form implementation generated from reading ui file 'settings_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.9
+# Created by: PyQt5 UI code generator 5.9.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -64,25 +64,25 @@ class Ui_SettingsDialog(object):
         spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem3)
         self.settings_tab_widget.addTab(self.similar_images_settings_tab, "")
-        self.metrics_settings = QtWidgets.QWidget()
-        self.metrics_settings.setObjectName("metrics_settings")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.metrics_settings)
+        self.similarities_settings = QtWidgets.QWidget()
+        self.similarities_settings.setObjectName("similarities_settings")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.similarities_settings)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         spacerItem4 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.verticalLayout_2.addItem(spacerItem4)
-        self.choose_descriptors_label_2 = QtWidgets.QLabel(self.metrics_settings)
-        self.choose_descriptors_label_2.setAlignment(QtCore.Qt.AlignCenter)
-        self.choose_descriptors_label_2.setObjectName("choose_descriptors_label_2")
-        self.verticalLayout_2.addWidget(self.choose_descriptors_label_2)
-        self.choose_metrics_combo_box = QtWidgets.QComboBox(self.metrics_settings)
-        self.choose_metrics_combo_box.setObjectName("choose_metrics_combo_box")
-        self.verticalLayout_2.addWidget(self.choose_metrics_combo_box)
-        self.extra_metrics_settings_layout = QtWidgets.QGridLayout()
-        self.extra_metrics_settings_layout.setObjectName("extra_metrics_settings_layout")
-        self.verticalLayout_2.addLayout(self.extra_metrics_settings_layout)
+        self.choose_similarities_label_2 = QtWidgets.QLabel(self.similarities_settings)
+        self.choose_similarities_label_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.choose_similarities_label_2.setObjectName("choose_similarities_label_2")
+        self.verticalLayout_2.addWidget(self.choose_similarities_label_2)
+        self.choose_similarities_combo_box = QtWidgets.QComboBox(self.similarities_settings)
+        self.choose_similarities_combo_box.setObjectName("choose_similarities_combo_box")
+        self.verticalLayout_2.addWidget(self.choose_similarities_combo_box)
+        self.extra_similarities_settings_layout = QtWidgets.QGridLayout()
+        self.extra_similarities_settings_layout.setObjectName("extra_similarities_settings_layout")
+        self.verticalLayout_2.addLayout(self.extra_similarities_settings_layout)
         spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem5)
-        self.settings_tab_widget.addTab(self.metrics_settings, "")
+        self.settings_tab_widget.addTab(self.similarities_settings, "")
         self.gridLayout.addWidget(self.settings_tab_widget, 1, 0, 1, 1)
         self.settings_conformation_buttons = QtWidgets.QDialogButtonBox(SettingsDialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
@@ -99,7 +99,7 @@ class Ui_SettingsDialog(object):
         self.gridLayout.addWidget(self.settings_conformation_buttons, 2, 0, 1, 1)
 
         self.retranslateUi(SettingsDialog)
-        self.settings_tab_widget.setCurrentIndex(0)
+        self.settings_tab_widget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(SettingsDialog)
 
     def retranslateUi(self, SettingsDialog):
@@ -110,6 +110,6 @@ class Ui_SettingsDialog(object):
         self.search_settings_label.setText(_translate("SettingsDialog", "How many similar images to display"))
         self.similar_images_count_label.setText(_translate("SettingsDialog", "0"))
         self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.similar_images_settings_tab), _translate("SettingsDialog", "Similar images"))
-        self.choose_descriptors_label_2.setText(_translate("SettingsDialog", "Choose metrics"))
-        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.metrics_settings), _translate("SettingsDialog", "Metrics"))
+        self.choose_similarities_label_2.setText(_translate("SettingsDialog", "Choose similarities"))
+        self.settings_tab_widget.setTabText(self.settings_tab_widget.indexOf(self.similarities_settings), _translate("SettingsDialog", "Similarities"))
 

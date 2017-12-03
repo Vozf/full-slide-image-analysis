@@ -1,8 +1,10 @@
 from functools import reduce
+
+import numpy
+import openslide
+
 from slide_analysis.descriptors import all_descriptors
 from slide_analysis.utils.tile_class import Tile
-import openslide
-import numpy
 
 
 def _compose_util(f, g):
@@ -30,3 +32,7 @@ def get_tiles_coords_from_indexes(indexes, step, img_w):
     y_coord = row * step
     x_coord = column * step
     return numpy.array([x_coord, y_coord]).T
+
+
+def get_similarity_map_shape(img_w, img_h, step):
+    return numpy.array([int(img_w / step), int(img_h / step)])

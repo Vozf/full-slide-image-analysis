@@ -1,9 +1,12 @@
 import numpy as np
 
+from slide_analysis.descriptors import COLOR_RANGE
+
 
 class EuclideanSimilarity:
     def __init__(self, fictive_param):
         pass
 
-    def compare(self, arr, hist):
-        return 1 / (1 + np.linalg.norm(arr - hist, axis=1))
+    def compare(self, descriptors_array, hist):
+        distances = np.linalg.norm(descriptors_array - hist, axis=1)
+        return 1 - distances / (np.sqrt(2) * COLOR_RANGE ** 2)
