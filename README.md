@@ -6,10 +6,6 @@ Look at the [releases page](https://github.com/Vozf/slide-analysis/releases).
 
 ## Installation from source
 
-
-[//]: # "todo: add pip installation"
-[//]: # "todo: clarify the python version"
-
 Install [requirements](requirements.txt). 
 
 Then, install slide-analysis with:

@@ -3,9 +3,8 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 
 from slide_analysis.UI.view.image_display import ImageDisplay
-from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
-from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
+from slide_analysis.UI.view.ui_main_window import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
@@ -20,8 +19,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.fullslide_viewer = ImageDisplay(self)
         self.fullslideImageLayout.addWidget(self.fullslide_viewer)
 
-        self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
-        self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
+        self.imageVerticalLayout = QGridLayout(self.topImagesScrollAreaWidgetContents)
         self.topImagesScrollArea.setWidgetResizable(True)
         self.topImagesScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.topImagesScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -32,28 +30,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.create_actions()
         self.create_menus()
 
-    # def eventFilter(self, source, event):
-    #     if event.type() == QtCore.QEvent.MouseMove:
-    #         if event.buttons() == QtCore.Qt.NoButton and self.is_image_popup_shown():
-    #             self.image_popup_widget.close()
-    #     return QMainWindow.eventFilter(self, source, event)
-
-    # def resizeEvent(self, event):
-    #     if not self.is_image_opened():
-    #         return
-    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
     def show_top_n(self, tiles):
         for i in reversed(range(self.imageVerticalLayout.count())):
             self.imageVerticalLayout.itemAt(i).widget().setParent(None)
 
-
+        row = col = 0
         for tile in tiles:
             label = QLabel()
             pixmap = QPixmap.fromImage(tile)
-            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatio)
+            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatioByExpanding)
             label.setPixmap(pixmap)
-            self.imageVerticalLayout.addWidget(label)
+            self.imageVerticalLayout.addWidget(label, row, col)
+            col += 1
+            if col % 2 == 0:
+                row += 1
+                col = 0
 
     def is_image_opened(self):
         return self.image_helper is not None
@@ -64,10 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def open(self):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open File")
         print("filepath:", filepath)
-        if filepath:
-            self.image_helper = ImageHelper(filepath)
-            self.fullslide_viewer.set_image(self.image_helper)
-            self.controller.set_desc_path(filepath)
+        self.controller.open_filepath(filepath)
 
     def get_pixmap(self, q_image):
         return QPixmap.fromImage(q_image)
@@ -107,8 +95,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.open_act.triggered.connect(self.open)
 
         self.exit_act = QAction("E&xit", self)
-        # , shortcut="Ctrl+Q",
-        # triggered=self.close)
         self.exit_act.setShortcut("Ctrl+Q")
         self.exit_act.triggered.connect(self.close)
 
@@ -140,7 +126,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.calculate_descriptor_act.setShortcut("Ctrl+K")
         self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
 
-        self.settings_act = QAction("Settings")
+        self.settings_act = QAction("Se&ttings")
+        self.settings_act.setShortcut("Ctrl+T")
         self.settings_act.triggered.connect(self.show_settings)
 
     def show_settings(self):
@@ -166,7 +153,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.help_menu.addAction(self.about_qt_act)
 
         self.menuBar().addMenu(self.file_menu)
-        # self.menuBar().addMenu(self.view_menu)
-        # self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.help_menu)
+
+    def closeEvent(self, QCloseEvent):
+        self.controller.close_event()
+        QMainWindow.closeEvent(self, QCloseEvent)
