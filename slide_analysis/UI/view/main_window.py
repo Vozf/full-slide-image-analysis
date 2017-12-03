@@ -1,33 +1,28 @@
-# from PyQt5.QtCore import QDir, Qt
-# from PyQt5.QtGui import QPalette, QPixmap
-# from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QLabel,
-#                              QMainWindow, QMenu, QMessageBox, QScrollArea, QSizePolicy)
-#
-
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
 
-from slide_analysis.UI.view.fullslide_viewer import FullslideViewer
+from slide_analysis.UI.view.image_display import ImageDisplay
 from slide_analysis.UI.view.image_helper import ImageHelper
 from slide_analysis.UI.view.settings_dialog import SettingsDialog
+from slide_analysis.UI.view.ui_mainWindow import Ui_MainWindow
 from slide_analysis.UI.view.ui_main_window import Ui_MainWindow
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 
 
-class ImageViewer(QMainWindow, Ui_MainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, controller, model):
-        super(ImageViewer, self).__init__()
+        super(MainWindow, self).__init__()
+        self.showMaximized()
         self.model = model
         self.controller = controller
         self.image_helper = None
 
         self.setupUi(self)
-        self.fullslide_viewer = FullslideViewer(self)
+        self.fullslide_viewer = ImageDisplay(self)
         self.fullslideImageLayout.addWidget(self.fullslide_viewer)
 
-        self.imageVerticalLayout = QBoxLayout(QBoxLayout.Down)
-        self.topImagesScrollAreaWidgetContents.setLayout(self.imageVerticalLayout)
+        self.imageVerticalLayout = QGridLayout(self.topImagesScrollAreaWidgetContents)
         self.topImagesScrollArea.setWidgetResizable(True)
         self.topImagesScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.topImagesScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -38,27 +33,21 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.create_actions()
         self.create_menus()
 
-    # def eventFilter(self, source, event):
-    #     if event.type() == QtCore.QEvent.MouseMove:
-    #         if event.buttons() == QtCore.Qt.NoButton and self.is_image_popup_shown():
-    #             self.image_popup_widget.close()
-    #     return QMainWindow.eventFilter(self, source, event)
-
-    # def resizeEvent(self, event):
-    #     if not self.is_image_opened():
-    #         return
-    #     self.fullslide_viewer.setPixmap(self.get_scaled_pixmap(self.image_helper.get_q_image()))
-
     def show_top_n(self, tiles):
         for i in reversed(range(self.imageVerticalLayout.count())):
             self.imageVerticalLayout.itemAt(i).widget().setParent(None)
 
+        row = col = 0
         for tile in tiles:
             label = QLabel()
             pixmap = QPixmap.fromImage(tile)
-            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatio)
+            pixmap = pixmap.scaled(BASE_TILE_WIDTH, BASE_TILE_HEIGHT, Qt.KeepAspectRatioByExpanding)
             label.setPixmap(pixmap)
-            self.imageVerticalLayout.addWidget(label)
+            self.imageVerticalLayout.addWidget(label, row, col)
+            col += 1
+            if col % 2 == 0:
+                row += 1
+                col = 0
 
     def show_map(self, map):
         map.show()
@@ -115,8 +104,6 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.open_act.triggered.connect(self.open)
 
         self.exit_act = QAction("E&xit", self)
-        # , shortcut="Ctrl+Q",
-        # triggered=self.close)
         self.exit_act.setShortcut("Ctrl+Q")
         self.exit_act.triggered.connect(self.close)
 
@@ -173,7 +160,5 @@ class ImageViewer(QMainWindow, Ui_MainWindow):
         self.help_menu.addAction(self.about_qt_act)
 
         self.menuBar().addMenu(self.file_menu)
-        # self.menuBar().addMenu(self.view_menu)
-        # self.menuBar().addMenu(self.navigation_menu)
         self.menuBar().addMenu(self.descriptor_menu)
         self.menuBar().addMenu(self.help_menu)

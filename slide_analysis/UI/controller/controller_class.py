@@ -4,6 +4,8 @@ import os
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
 
+from slide_analysis.UI.view import MainWindow
+from slide_analysis.UI.model import Model
 from slide_analysis.UI.controller.constants import *
 from slide_analysis.UI.model import Model
 from slide_analysis.UI.view import ImageViewer
@@ -17,7 +19,7 @@ class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
         self.model = Model()
-        self.image_viewer = ImageViewer(self, self.model)
+        self.image_viewer = MainWindow(self, self.model)
 
         self.app.installEventFilter(self.image_viewer)
         self.settings = QSettings("grad", "slide_analysis")
