@@ -36,3 +36,13 @@ def get_tiles_coords_from_indexes(indexes, step, img_w):
 
 def get_similarity_map_shape(img_w, img_h, step):
     return numpy.array([int(img_w / step), int(img_h / step)])
+
+
+def generate_transform_function(a, y):
+    b = (4 * y ** 3 - 3 * a * y ** 2 + 2 * a * y) / (3 * y ** 2 - 2 * (a + 1) * y + a)
+    k = numpy.max([1.0 / a / b, -1.0 / (1 - a) / (1 - b)])
+
+    def f(x):
+        return k * x * (x - a) * (x - b) * (x - 1) + x
+
+    return f

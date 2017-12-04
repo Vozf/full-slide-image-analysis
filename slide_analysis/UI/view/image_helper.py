@@ -52,7 +52,7 @@ class ImageHelper:
     def img_from_arr(self, arr):
         print("---------- CREATING IMG FROM ARR -------------")
         shape = arr.shape
-        return Image.fromarray(arr.reshape([shape[1], shape[0], shape[2]]), 'RGB')
+        return Image.fromarray(arr.reshape([shape[1], shape[0], shape[2]]), 'RGBA')
 
     def __calculate_movement_step_coordinates(self):
         self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
