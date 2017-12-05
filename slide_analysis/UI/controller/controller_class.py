@@ -18,10 +18,10 @@ class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
         self.model = Model()
+        self.settings = QSettings("grad", "slide_analysis")
         self.image_viewer = MainWindow(self, self.model)
 
         self.app.installEventFilter(self.image_viewer)
-        self.settings = QSettings("grad", "slide_analysis")
 
         geometry = self.settings.value(GEOMETRY)
         if geometry is not None:
@@ -37,8 +37,15 @@ class Controller:
         self.descriptor_database = None
         self.selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
 
+    def get_similar_images_area_width(self):
+        return DEFAULT_LEFT_RIGHT_MARGIN * 2 + BASE_TILE_WIDTH * self.get_columns_count() + \
+                       DEFAULT_IN_BETWEEN_MARGIN * 2 * (self.get_columns_count() - 1)
+
     def get_chosen_n(self):
         return self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
+
+    def get_columns_count(self):
+        return self.settings.value(CHOSEN_COLUMNS_COUNT, CHOSEN_COLUMNS_COUNT_DEFAULT_VALUE, type=int)
 
     def get_chosen_descriptor_idx(self):
         return self.settings.value(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE,
@@ -63,6 +70,8 @@ class Controller:
     def settings_changed(self, settings_new_state):
         for k, v in settings_new_state.items():
             self.settings.setValue(k, v)
+        self.image_viewer.set_similar_images_area_width(self.get_similar_images_area_width())
+        self.image_viewer.clear_similar_images_area()
 
     def get_imagepath(self):
         return self.image_viewer.image_helper.get_filepath()

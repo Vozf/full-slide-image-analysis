@@ -66,6 +66,9 @@ class ImageDisplay(QGraphicsView):
             self.scale(factor, factor)
             self.centerOn(rect.center())
 
+    def resizeEvent(self, QResizeEvent):
+        self.fitInView()
+
     def is_image_popup_shown(self):
         return self.image_popup_widget is not None
 

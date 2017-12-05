@@ -1,3 +1,5 @@
+from PyQt5 import QtCore
+
 from PyQt5.QtCore import QDir, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import *
@@ -14,15 +16,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.model = model
         self.controller = controller
         self.image_helper = None
-
         self.setupUi(self)
         self.fullslide_viewer = ImageDisplay(self)
         self.fullslideImageLayout.addWidget(self.fullslide_viewer)
-
         self.imageVerticalLayout = QGridLayout(self.topImagesScrollAreaWidgetContents)
         self.topImagesScrollArea.setWidgetResizable(True)
         self.topImagesScrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.topImagesScrollArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        current_width = self.controller.get_similar_images_area_width()
+        self.topImagesScrollArea.setMinimumWidth(current_width)
+        self.topImagesScrollArea.setMaximumWidth(current_width)
         self.image_popup_widget = None
         self.settings_dialog = None
         self.show()
@@ -30,11 +33,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.create_actions()
         self.create_menus()
 
-    def show_top_n(self, tiles):
+    def set_similar_images_area_width(self, current_width):
+        self.topImagesScrollArea.setMinimumWidth(current_width)
+        self.topImagesScrollArea.setMaximumWidth(current_width)
+
+    def clear_similar_images_area(self):
         for i in reversed(range(self.imageVerticalLayout.count())):
             self.imageVerticalLayout.itemAt(i).widget().setParent(None)
 
+    def show_top_n(self, tiles):
+        self.clear_similar_images_area()
+
         row = col = 0
+        max_columns = self.controller.get_columns_count()
         for tile in tiles:
             label = QLabel()
             pixmap = QPixmap.fromImage(tile)
@@ -42,7 +53,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             label.setPixmap(pixmap)
             self.imageVerticalLayout.addWidget(label, row, col)
             col += 1
-            if col % 2 == 0:
+            if col % max_columns == 0:
                 row += 1
                 col = 0
 

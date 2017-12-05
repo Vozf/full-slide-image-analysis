@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main_layout.ui'
+# Form implementation generated from reading ui file 'slide_analysis/UI/view/main_layout.ui'
 #
-# Created by: PyQt5 UI code generator 5.9.1
+# Created by: PyQt5 UI code generator 5.9
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,12 +17,12 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.topImagesScrollArea = QtWidgets.QScrollArea(self.centralwidget)
-        self.topImagesScrollArea.setMinimumSize(QtCore.QSize(260, 0))
-        self.topImagesScrollArea.setMaximumSize(QtCore.QSize(541, 16777215))
+        self.topImagesScrollArea.setMinimumSize(QtCore.QSize(540, 0))
+        self.topImagesScrollArea.setMaximumSize(QtCore.QSize(540, 16777215))
         self.topImagesScrollArea.setWidgetResizable(True)
         self.topImagesScrollArea.setObjectName("topImagesScrollArea")
         self.topImagesScrollAreaWidgetContents = QtWidgets.QWidget()
-        self.topImagesScrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 539, 736))
+        self.topImagesScrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 538, 736))
         self.topImagesScrollAreaWidgetContents.setObjectName("topImagesScrollAreaWidgetContents")
         self.topImagesScrollArea.setWidget(self.topImagesScrollAreaWidgetContents)
         self.horizontalLayout.addWidget(self.topImagesScrollArea)
