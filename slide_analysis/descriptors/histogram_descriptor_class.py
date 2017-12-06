@@ -1,6 +1,6 @@
 import numpy
 from slide_analysis.descriptors.constants import *
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 
 
 class HistogramDescriptor:
@@ -16,6 +16,6 @@ class HistogramDescriptor:
         return value
 
     def get_descriptor_array(self, tile_stream):
-        with ProcessPoolExecutor() as executor:
+        with ThreadPoolExecutor() as executor:
             self.descr_arr = list(executor.map(self.calc, tile_stream))
             return self.descr_arr
