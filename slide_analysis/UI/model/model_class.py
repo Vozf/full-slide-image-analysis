@@ -3,8 +3,6 @@ from slide_analysis.descriptors import all_descriptors
 from slide_analysis.search_service import SearchService
 from slide_analysis.similarities import all_similarities
 from slide_analysis.splitting_service import SplittingService
-from slide_analysis.utils import generate_transform_function
-import numpy
 import matplotlib.cm as cm
 
 
