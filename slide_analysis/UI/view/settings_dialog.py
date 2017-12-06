@@ -10,13 +10,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.setupUi(self)
         self.controller = controller
         self.init_buttons()
-        self.similar_images_count_slider.valueChanged.connect(self.slider_position_changed)
-        self.choose_descriptors_combo_box.activated.connect(self.descriptor_changed)
-        self.choose_similarities_combo_box.currentIndexChanged.connect(self.similarity_changed)
-        self.set_current_settings()
-        self.current_settings = {}
-        self.init_slider()
+        self.similar_images_count_slider.valueChanged.connect(self.image_count_slider_position_changed)
+        self.similar_images_columns_count_slider.valueChanged.connect(self.columns_count_slider_position_changed)
         self.init_combo_boxes()
+        self.init_settings_value()
 
     def init_combo_boxes(self):
         self.choose_descriptors_combo_box.addItems(
@@ -24,37 +21,34 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         self.choose_similarities_combo_box.addItems(
             map(lambda x: x.__name__, self.controller.get_similarities()))
 
-    def init_slider(self):
-        self.similar_images_count_slider.setValue(self.current_slider_value)
+    def init_settings_value(self):
+        self.similar_images_count_slider.setValue(self.controller.get_chosen_n())
+        self.similar_images_columns_count_slider.setValue(self.controller.get_columns_count())
+        self.choose_descriptors_combo_box.setCurrentIndex(self.controller
+                                                          .get_chosen_descriptor_idx())
+        self.choose_similarities_combo_box.setCurrentIndex(self.controller
+                                                           .get_chosen_similarity_idx())
 
-    def set_current_settings(self):
-        self.current_slider_value = self.controller.get_chosen_n()
-        self.current_descriptor_idx = self.controller.get_chosen_descriptor_idx()
-        self.current_similarity_idx = self.controller.get_chosen_similarity_idx()
+    def image_count_slider_position_changed(self):
+        self.similar_images_count_label.setText(str(self.similar_images_count_slider.value()))
 
-    def slider_position_changed(self):
-        self.current_slider_value = self.similar_images_count_slider.value()
-        self.current_settings[CHOSEN_N] = self.current_slider_value
-        self.similar_images_count_label.setText(self.current_slider_value.__str__())
-
-    def descriptor_changed(self):
-        self.current_descriptor_idx = self.choose_descriptors_combo_box.currentIndex()
-        self.current_settings[CHOSEN_DESCRIPTOR_IDX] = self.current_descriptor_idx
-
-    def similarity_changed(self):
-        self.current_similarity_idx = self.choose_similarities_combo_box.currentIndex()
-        self.current_settings[CHOSEN_SIMILARITY_IDX] = self.current_similarity_idx
+    def columns_count_slider_position_changed(self):
+        self.similar_images_columns_count_text_label.setText(str(self.similar_images_columns_count_slider.value()))
 
     def show_dialog(self):
         self.show()
 
     def accept(self):
-        self.controller.settings_changed(self.current_settings)
+        settings = {
+            CHOSEN_N: self.similar_images_count_slider.value(),
+            CHOSEN_COLUMNS_COUNT: self.similar_images_columns_count_slider.value(),
+            CHOSEN_DESCRIPTOR_IDX: self.choose_descriptors_combo_box.currentIndex(),
+            CHOSEN_SIMILARITY_IDX: self.choose_similarities_combo_box.currentIndex(),
+        }
+        self.controller.settings_changed(settings)
         self.close()
 
     def decline(self):
-        self.current_settings = None
-        self.set_current_settings()
         self.close()
 
     def init_buttons(self):
