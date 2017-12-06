@@ -71,7 +71,7 @@ class Controller:
         for k, v in settings_new_state.items():
             self.settings.setValue(k, v)
         self.image_viewer.set_similar_images_area_width(self.get_similar_images_area_width())
-        self.image_viewer.clear_similar_images_area()
+        self.image_viewer.clear_top_images_area()
 
     def get_imagepath(self):
         return self.image_viewer.image_helper.get_filepath()
@@ -97,10 +97,13 @@ class Controller:
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
         top_n = self.model.find_similar(tile, self.get_chosen_n(),
                                         self.get_chosen_similarity_idx(), self.get_similarity_params())
-
         qts = list(map(lambda tup:
                        self.image_viewer.image_helper.get_qt_from_coordinates(tup), top_n))
-        self.image_viewer.show_top_n(qts)
+        chosen_image = self.image_viewer.image_helper.get_qt_from_coordinates(coordinates)
+        self.image_viewer.show_top_n(chosen_image, qts)
+
+    def get_similarity_map(self):
+        return self.image_viewer.image_helper.get_qt_from_coordinates([0, 0])
 
     @staticmethod
     def _select_last_modified_file_in_folder():
@@ -129,7 +132,7 @@ class Controller:
         if not filepath:
             return
         self.image_viewer.image_helper = ImageHelper(filepath)
-        self.image_viewer.fullslide_viewer.set_image(self.image_viewer.image_helper)
+        self.image_viewer.image_display.set_image(self.image_viewer.image_helper)
         self.set_desc_path(filepath)
 
         self.settings.setValue(LAST_IMAGE, filepath)

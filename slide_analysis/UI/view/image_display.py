@@ -22,6 +22,7 @@ class ImageDisplay(QGraphicsView):
         self.controller = parent.controller
         self.image_popup_widget = None
         self.current_mouse_press_coordinates = None
+        self.similarity_map_graphics_item = QGraphicsPixmapItem()
 
     def mousePressEvent(self, q_mouse_event):
         if self.image_helper is not None:
@@ -54,6 +55,39 @@ class ImageDisplay(QGraphicsView):
             self.image_popup_widget = None
         QGraphicsView.mouseMoveEvent(self, q_mouse_event)
 
+    def wheelEvent(self, event):
+        if not self._photo.pixmap().isNull():
+            image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
+            if event.angleDelta().y() > 0:
+                factor = 1.25
+                self._zoom += 1
+            else:
+                factor = 0.8
+                self._zoom -= 1
+            if self._zoom > 0:
+
+                self.scale(factor, factor)
+
+                viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
+                if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[1] < 0.5):
+                    self.image_helper.set_current_image_rect(image_rect)
+                    self.image_helper.move_to_next_image_level()
+                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+                    self._photo.setPixmap(pixmap)
+                    self.update_image()
+                elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
+                    self.image_helper.set_current_image_rect(image_rect)
+                    self.image_helper.move_to_prev_image_level()
+                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
+                    self._photo.setPixmap(pixmap)
+                    self.update_image()
+
+            elif self._zoom == 0:
+                self.image_helper.set_current_image_rect(image_rect)
+                self.fitInView()
+            else:
+                self._zoom = 0
+
     def fitInView(self, **kwargs):
         rect = QRectF(self._photo.pixmap().rect())
         if not rect.isNull():
@@ -68,6 +102,16 @@ class ImageDisplay(QGraphicsView):
 
     def resizeEvent(self, QResizeEvent):
         self.fitInView()
+
+    def show_similarity_map(self):
+        self.similarity_map = QPixmap().fromImage(self.controller.get_similarity_map())
+        self.similarity_map = self.similarity_map.scaled(self._scene.width(), self._scene.height(), Qt.IgnoreAspectRatio)
+        self.similarity_map_graphics_item.setPixmap(self.similarity_map)
+        self.similarity_map_graphics_item.setOpacity(0.7)
+
+        self._scene.addItem(self.similarity_map_graphics_item)
+        self.similarity_map_graphics_item.setPos(0, 0)
+        print(self.similarity_map_graphics_item.mapToItem(self._photo, 0.0, 0.0).x())
 
     def is_image_popup_shown(self):
         return self.image_popup_widget is not None
@@ -97,35 +141,3 @@ class ImageDisplay(QGraphicsView):
         self.scale(factor, factor)
         rect_tuple = self.image_helper.get_current_displayed_image_rect()
         self.ensureVisible(rect_tuple[0], rect_tuple[1], rect_tuple[2], rect_tuple[3], 0, 0)
-
-    def wheelEvent(self, event):
-        if not self._photo.pixmap().isNull():
-            viewrect = [self.viewport().rect().width(), self.viewport().rect().height()]
-            image_rect = self.mapToScene(self.viewport().rect()).boundingRect()
-            if event.angleDelta().y() > 0:
-                factor = 1.25
-                self._zoom += 1
-            else:
-                factor = 0.8
-                self._zoom -= 1
-            if self._zoom > 0:
-                if factor > 1 and (image_rect.width() / viewrect[0] < 0.5 or image_rect.height() / viewrect[1] < 0.5):
-                    self.image_helper.set_current_image_rect(image_rect)
-                    self.image_helper.move_to_next_image_level()
-                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
-                    self._photo.setPixmap(pixmap)
-                    self.update_image()
-                elif factor < 1 and (image_rect.width() / viewrect[0] > 2 or image_rect.height() / viewrect[1] > 2):
-                    self.image_helper.set_current_image_rect(image_rect)
-                    self.image_helper.move_to_prev_image_level()
-                    pixmap = QPixmap.fromImage(self.image_helper.get_q_image())
-                    self._photo.setPixmap(pixmap)
-                    self.update_image()
-                else:
-                    self.scale(factor, factor)
-
-            elif self._zoom == 0:
-                self.image_helper.set_current_image_rect(image_rect)
-                self.fitInView()
-            else:
-                self._zoom = 0
