@@ -30,6 +30,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.image_popup_widget = None
         self.settings_dialog = None
         self.show()
+        self.is_similarity_map_shown = False
 
         self.create_actions()
         self.create_menus()
@@ -169,13 +170,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.show_similarity_map_act = QAction("Show similarity map")
         self.show_similarity_map_act.triggered.connect(self.show_similarity_map)
+        self.show_similarity_map_act.setCheckable(True)
 
         self.settings_act = QAction("Se&ttings")
         self.settings_act.setShortcut("Ctrl+T")
         self.settings_act.triggered.connect(self.show_settings)
 
     def show_similarity_map(self):
-        self.image_display.show_similarity_map()
+        if not self.is_similarity_map_shown:
+            self.is_similarity_map_shown = True
+            self.image_display.show_similarity_map()
+        else:
+            self.is_similarity_map_shown = False
+            self.image_display.hide_similarity_map()
 
     def show_settings(self):
         if self.settings_dialog is None:
