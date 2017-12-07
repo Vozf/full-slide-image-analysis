@@ -74,8 +74,9 @@ class ImageHelper:
     def img_from_arr(self, arr):
         shape = arr.shape
         # todo: somehow return Qimage object from reshaped array
-        QImage().loadFromData(arr.reshape([shape[1], shape[0], shape[2]]))
-        return QImage().toImageFormat(QPixelFormat())
+        # QImage(arr.data, arr.shape[1], arr.shape[0], QImage.Format_RGB888)
+        # QImage().loadFromData(arr.reshape([shape[1], shape[0], shape[2]]))
+        return QImage(arr.data, shape[1], shape[0], QImage.Format_RGBA8888)
 
     def update_image_rect(self):
         offset = (self.current_displayed_image_size[0] * pow(2, self.current_level),
