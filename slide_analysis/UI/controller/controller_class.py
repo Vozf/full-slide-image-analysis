@@ -18,10 +18,10 @@ class Controller:
         self.app = QApplication(argv)
         self.model = Model()
 
+        self.settings = QSettings("grad", "slide_analysis")
         self.main_window = MainWindow(self, self.model)
 
         self.app.installEventFilter(self.main_window)
-        self.settings = QSettings("grad", "slide_analysis")
 
         geometry = self.settings.value(GEOMETRY)
         if geometry is not None:
@@ -137,7 +137,7 @@ class Controller:
         if not filepath:
             return
         self.main_window.image_helper = ImageHelper(filepath)
-        self.main_window.fullslide_viewer.set_image(self.main_window.image_helper)
+        self.main_window.image_display.set_image(self.main_window.image_helper)
 
         self.set_desc_path(filepath)
 
