@@ -1,7 +1,8 @@
-from PyQt5.QtCore import QSettings
-from PyQt5.QtWidgets import QApplication
 import os
 import glob
+
+from PyQt5.QtCore import QSettings
+from PyQt5.QtWidgets import QApplication
 
 from slide_analysis.UI.controller.constants import *
 from slide_analysis.UI.model import Model
