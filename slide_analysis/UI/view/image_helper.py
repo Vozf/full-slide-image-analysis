@@ -1,5 +1,8 @@
 import openslide
 from PIL import ImageQt
+from PIL import Image
+from PyQt5.QtGui import QImage
+from PyQt5.QtGui import QPixelFormat
 
 from slide_analysis.UI.view.constants import BASE_SCALE_FACTOR
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
@@ -17,10 +20,6 @@ class ImageHelper:
         self.current_displayed_image_size = self.level_dimensions[self.current_level]
         self.current_image_size = self.current_displayed_image_size
 
-        self.image_dimensions = self.level_dimensions[0]
-        self.scale_factor = BASE_SCALE_FACTOR
-        self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
-                                      self.image_dimensions[1] // self.scale_factor)
         self.image = self.openslide_image.read_region(self.current_image_coordinates, self.current_level,
                                                       self.level_dimensions[self.current_level])
         self.image_slide = openslide.ImageSlide(self.image)
@@ -46,10 +45,11 @@ class ImageHelper:
         return ImageQt.ImageQt(
             self.openslide_image.read_region(tile_coordinates, 0, (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)))
 
-    def __calculate_movement_step_coordinates(self):
-        self.current_movement_step = (self.image_dimensions[0] // self.scale_factor,
-                                      self.image_dimensions[1] // self.scale_factor)
-        print('Current movement step:', self.current_movement_step)
+    def get_non_scaled_image(self, viewrect = None):
+        self.current_level = self.openslide_image.level_count - 1
+        self.current_displayed_image_size = self.level_dimensions[self.current_level]
+        self.current_image_size = self.current_displayed_image_size
+        return self.update_q_image(viewrect)
 
     def set_current_image_rect(self, view_rect):
         self.current_displayed_image_size = (int(view_rect.width()), int(view_rect.height()))
@@ -67,6 +67,9 @@ class ImageHelper:
                                                       self.current_image_size)
         self.print_status()
         return ImageQt.ImageQt(self.image)
+
+    def img_from_arr(self, arr):
+        return QImage(arr.data, arr.shape[0], arr.shape[1], QImage.Format_RGBA8888)
 
     def update_image_rect(self):
         offset = (self.current_displayed_image_size[0] * pow(2, self.current_level),
@@ -143,24 +146,6 @@ class ImageHelper:
             self.image = self.openslide_image.read_region(self.current_image_coordinates,
                                                           self.current_level,
                                                           self.current_image_size)
-
-    def set_coordinates(self, x, y):
-        to_set_x = self.__get_correct_coordinate(x, self.image_dimensions[0],
-                                                 self.current_movement_step[1])
-        to_set_y = self.__get_correct_coordinate(y, self.image_dimensions[1],
-                                                 self.current_movement_step[1])
-        self.current_displayed_image_coordinates = (to_set_x, to_set_y)
-        self.print_status()
-
-    @staticmethod
-    def __get_correct_coordinate(coordinate, dimension, step):
-        if coordinate > 0:
-            if coordinate < dimension:
-                return coordinate
-            else:
-                return dimension - step
-        else:
-            return 0
 
     def print_status(self):
         print('Current level:', self.current_level)

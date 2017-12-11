@@ -1,5 +1,5 @@
-import glob
 import os
+import glob
 
 from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import QApplication
@@ -11,24 +11,25 @@ from slide_analysis.UI.view import ImageHelper
 from slide_analysis.constants.tile import BASE_TILE_WIDTH, BASE_TILE_HEIGHT
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService \
     as DDWS
-from slide_analysis.utils.functions import get_tile_from_coordinates
+from slide_analysis.utils.functions import get_tile_from_coordinates, get_tiles_coords_from_indexes
 
 
 class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
         self.model = Model()
+
+        self.settings = QSettings("grad", "slide_analysis")
         self.main_window = MainWindow(self, self.model)
 
         self.app.installEventFilter(self.main_window)
-        self.settings = QSettings("grad", "slide_analysis")
 
         geometry = self.settings.value(GEOMETRY)
         if geometry is not None:
-            self.image_viewer.restoreGeometry(geometry)
+            self.main_window.restoreGeometry(geometry)
         window_state = self.settings.value(WINDOW_STATE)
         if window_state is not None:
-            self.image_viewer.restoreState(window_state)
+            self.main_window.restoreState(window_state)
 
         last_image = self.settings.value(LAST_IMAGE)
         if last_image is not None:
@@ -37,8 +38,15 @@ class Controller:
         self.descriptor_database = None
         self.selected_dimensions = (BASE_TILE_WIDTH, BASE_TILE_HEIGHT)
 
+    def get_similar_images_area_width(self):
+        return DEFAULT_LEFT_RIGHT_MARGIN * 2 + BASE_TILE_WIDTH * self.get_columns_count() + \
+                       DEFAULT_IN_BETWEEN_MARGIN * 2 * (self.get_columns_count() - 1)
+
     def get_chosen_n(self):
         return self.settings.value(CHOSEN_N, CHOSEN_N_DEFAULT_VALUE, type=int)
+
+    def get_columns_count(self):
+        return self.settings.value(CHOSEN_COLUMNS_COUNT, CHOSEN_COLUMNS_COUNT_DEFAULT_VALUE, type=int)
 
     def get_chosen_descriptor_idx(self):
         return self.settings.value(CHOSEN_DESCRIPTOR_IDX, CHOSEN_DESCRIPTOR_IDX_DEFAULT_VALUE,
@@ -63,6 +71,8 @@ class Controller:
     def settings_changed(self, settings_new_state):
         for k, v in settings_new_state.items():
             self.settings.setValue(k, v)
+        self.main_window.set_similar_images_area_width(self.get_similar_images_area_width())
+        self.main_window.clear_top_images_area()
 
     def get_imagepath(self):
         return self.main_window.image_helper.get_filepath()
@@ -84,12 +94,21 @@ class Controller:
         imagepath = self.get_imagepath()
 
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
-        top_n = self.model.find_similar(tile, self.get_chosen_n(),
-                                        self.get_chosen_similarity_idx(), self.get_similarity_params())
 
-        qts = list(map(lambda tup:
-                       self.main_window.image_helper.get_qt_from_coordinates(tup), top_n))
-        self.main_window.show_top_n(qts)
+        similarity_obj = self.model.find_similar(tile, self.get_chosen_n(),
+                                        self.get_chosen_similarity_idx(),
+                                        self.get_similarity_params())
+        top_n = similarity_obj["top_n"]
+        img_arr = similarity_obj["img_arr"]
+        qts = list(map(lambda tup: self.main_window.image_helper.get_qt_from_coordinates(
+            tup), top_n))
+        self.similarity_map = self.main_window.image_helper.img_from_arr(img_arr)
+        chosen_image = self.main_window.image_helper.get_qt_from_coordinates(coordinates)
+        self.main_window.show_top_n(chosen_image, qts)
+
+    def get_similarity_map(self):
+        return self.similarity_map
+
 
     @staticmethod
     def _select_last_modified_file_in_folder():
@@ -102,7 +121,8 @@ class Controller:
         descr_base_path = \
             DDWS.generate_name_of_basefile(DESCRIPTOR_DIRECTORY_PATH,
                                            image_path,
-                                           self.get_descriptors()[self.get_chosen_descriptor_idx()],
+                                           self.get_descriptors()[
+                                               self.get_chosen_descriptor_idx()],
                                            self.get_descriptor_params())
         if os.path.exists(descr_base_path):
             self.descriptor_database = descr_base_path
@@ -111,14 +131,15 @@ class Controller:
             print('----- There is no calculated descriptors for chosen params -----')
 
     def close_event(self):
-        self.settings.setValue(GEOMETRY, self.image_viewer.saveGeometry())
-        self.settings.setValue(WINDOW_STATE, self.image_viewer.saveState())
+        self.settings.setValue(GEOMETRY, self.main_window.saveGeometry())
+        self.settings.setValue(WINDOW_STATE, self.main_window.saveState())
 
     def open_filepath(self, filepath):
         if not filepath:
             return
         self.main_window.image_helper = ImageHelper(filepath)
-        self.main_window.fullslide_viewer.set_image(self.image_viewer.image_helper)
+        self.main_window.image_display.set_image(self.main_window.image_helper)
+
         self.set_desc_path(filepath)
 
         self.settings.setValue(LAST_IMAGE, filepath)

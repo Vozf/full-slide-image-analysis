@@ -1,11 +1,12 @@
+import matplotlib.cm as cm
+from threading import Thread
+
 from slide_analysis.descriptor_database_service import DescriptorDatabaseWriteService
 from slide_analysis.descriptors import all_descriptors
 from slide_analysis.search_service import SearchService
 from slide_analysis.similarities import all_similarities
 from slide_analysis.splitting_service import SplittingService
 from slide_analysis.search_service import SearchService
-from threading import Thread
-
 
 
 class Model:
@@ -32,6 +33,15 @@ class Model:
     def init_search_service(self, desc_path):
         self.search_service = SearchService(desc_path)
 
+    def create_img_map(self, sim_map):
+        map = cm.ScalarMappable(cmap='jet').to_rgba(sim_map, bytes=True)
+        return map
+
     def find_similar(self, tile, n, similarity_class_idx, similarity_class_params):
-        return self.search_service.search(tile, n, self.similarities[similarity_class_idx],
+        similarity_obj = self.search_service.search(tile, n, self.similarities[similarity_class_idx],
                                           similarity_class_params)
+        sim_map = similarity_obj["sim_map"]
+        return {
+            "top_n": similarity_obj["top_n"],
+            "img_arr": self.create_img_map(sim_map)
+        }

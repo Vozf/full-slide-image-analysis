@@ -23,7 +23,6 @@ class DescriptorDatabaseWriteService:
         return base_path + descr_class.__name__ + " " + str(
             descr_params) + " " + image_name[0:image_name.find('.')] + ".npy"
 
-    # todo move making of descr_filename somewhere else, so it can be accessed and modified
     def create(self, tile_stream):
         split = tile_stream.splitting_service
         image_path = split.path
