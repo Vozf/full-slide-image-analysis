@@ -8,6 +8,6 @@ class Chi2Similarity:
         self.eps = eps
 
     def compare(self, descriptors_array, hist):
-        distances = 0.5 * np.sum((descriptors_array - hist) ** 2 / (descriptors_array + hist + self.eps), axis=1)
+        distances = np.sum((descriptors_array - hist) ** 2 / (descriptors_array + hist + self.eps), axis=1) / 2
 
-        return 1 - distances / (np.sqrt(2) * COLOR_RANGE ** 2)
+        return 1 - distances / (COLOR_RANGE ** 2)

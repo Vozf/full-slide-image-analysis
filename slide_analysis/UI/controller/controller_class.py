@@ -17,17 +17,18 @@ class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
         self.model = Model()
-        self.settings = QSettings("grad", "slide_analysis")
-        self.image_viewer = MainWindow(self, self.model)
 
-        self.app.installEventFilter(self.image_viewer)
+        self.main_window = MainWindow(self, self.model)
+
+        self.app.installEventFilter(self.main_window)
+        self.settings = QSettings("grad", "slide_analysis")
 
         geometry = self.settings.value(GEOMETRY)
         if geometry is not None:
-            self.image_viewer.restoreGeometry(geometry)
+            self.main_window.restoreGeometry(geometry)
         window_state = self.settings.value(WINDOW_STATE)
         if window_state is not None:
-            self.image_viewer.restoreState(window_state)
+            self.main_window.restoreState(window_state)
 
         last_image = self.settings.value(LAST_IMAGE)
         if last_image is not None:
@@ -63,25 +64,23 @@ class Controller:
                                    type=float)
 
     def run(self):
-        self.image_viewer.show()
+        self.main_window.show()
         return self.app.exec_()
 
     def settings_changed(self, settings_new_state):
         for k, v in settings_new_state.items():
             self.settings.setValue(k, v)
-        self.image_viewer.set_similar_images_area_width(self.get_similar_images_area_width())
-        self.image_viewer.clear_top_images_area()
+        self.main_window.set_similar_images_area_width(self.get_similar_images_area_width())
+        self.main_window.clear_top_images_area()
 
     def get_imagepath(self):
-        return self.image_viewer.image_helper.get_filepath()
+        return self.main_window.image_helper.get_filepath()
 
     def calculate_descriptors(self):
         imagepath = self.get_imagepath()
         descriptor_base = self.model.calculate_descriptors(self.get_chosen_descriptor_idx(),
                                                            self.get_descriptor_params(),
                                                            imagepath, DESCRIPTOR_DIRECTORY_PATH)
-        self.descriptor_database = descriptor_base
-        self.model.init_search_service(descriptor_base)
 
     def get_descriptors(self):
         return self.model.descriptors
@@ -94,19 +93,21 @@ class Controller:
         imagepath = self.get_imagepath()
 
         tile = get_tile_from_coordinates(imagepath, *coordinates, *dimensions)
+
         similarity_obj = self.model.find_similar(tile, self.get_chosen_n(),
                                         self.get_chosen_similarity_idx(),
                                         self.get_similarity_params())
         top_n = similarity_obj["top_n"]
         img_arr = similarity_obj["img_arr"]
-        qts = list(map(lambda tup: self.image_viewer.image_helper.get_qt_from_coordinates(
+        qts = list(map(lambda tup: self.main_window.image_helper.get_qt_from_coordinates(
             tup), top_n))
-        self.similarity_map = self.image_viewer.image_helper.img_from_arr(img_arr)
-        chosen_image = self.image_viewer.image_helper.get_qt_from_coordinates(coordinates)
-        self.image_viewer.show_top_n(chosen_image, qts)
+        self.similarity_map = self.main_window.image_helper.img_from_arr(img_arr)
+        chosen_image = self.main_window.image_helper.get_qt_from_coordinates(coordinates)
+        self.main_window.show_top_n(chosen_image, qts)
 
     def get_similarity_map(self):
         return self.similarity_map
+
 
     @staticmethod
     def _select_last_modified_file_in_folder():
@@ -129,14 +130,15 @@ class Controller:
             print('----- There is no calculated descriptors for chosen params -----')
 
     def close_event(self):
-        self.settings.setValue(GEOMETRY, self.image_viewer.saveGeometry())
-        self.settings.setValue(WINDOW_STATE, self.image_viewer.saveState())
+        self.settings.setValue(GEOMETRY, self.main_window.saveGeometry())
+        self.settings.setValue(WINDOW_STATE, self.main_window.saveState())
 
     def open_filepath(self, filepath):
         if not filepath:
             return
-        self.image_viewer.image_helper = ImageHelper(filepath)
-        self.image_viewer.image_display.set_image(self.image_viewer.image_helper)
+        self.main_window.image_helper = ImageHelper(filepath)
+        self.main_window.fullslide_viewer.set_image(self.main_window.image_helper)
+
         self.set_desc_path(filepath)
 
         self.settings.setValue(LAST_IMAGE, filepath)

@@ -98,7 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return self.image_popup_widget is not None
 
     def open(self):
-        filepath, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.currentPath())
+        filepath, _ = QFileDialog.getOpenFileName(self, "Open File")
         print("filepath:", filepath)
         self.controller.open_filepath(filepath)
 
@@ -166,6 +166,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.about_qt_act.triggered.connect(QApplication.instance().aboutQt)
 
         self.calculate_descriptor_act = QAction("Calculate")
+        self.calculate_descriptor_act.setShortcut("Ctrl+K")
         self.calculate_descriptor_act.triggered.connect(self.controller.calculate_descriptors)
 
         self.show_similarity_map_act = QAction("Show similarity map")
