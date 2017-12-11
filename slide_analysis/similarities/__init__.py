@@ -1,3 +1,4 @@
+from slide_analysis.similarities.chi2_similarity_class import Chi2Similarity
 from slide_analysis.similarities.euclidean_similarity_class import EuclideanSimilarity
-all_similarities = [EuclideanSimilarity]
 
+all_similarities = [EuclideanSimilarity, Chi2Similarity]

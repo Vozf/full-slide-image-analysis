@@ -1,4 +1,5 @@
 import numpy
+
 from slide_analysis.descriptors.constants import *
 from concurrent.futures import ThreadPoolExecutor
 
