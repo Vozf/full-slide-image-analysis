@@ -18,9 +18,9 @@ class Controller:
     def __init__(self, argv):
         self.app = QApplication(argv)
         self.model = Model()
-        self.image_viewer = MainWindow(self, self.model)
+        self.main_window = MainWindow(self, self.model)
 
-        self.app.installEventFilter(self.image_viewer)
+        self.app.installEventFilter(self.main_window)
         self.settings = QSettings("grad", "slide_analysis")
 
         geometry = self.settings.value(GEOMETRY)
@@ -57,7 +57,7 @@ class Controller:
                                    type=float)
 
     def run(self):
-        self.image_viewer.show()
+        self.main_window.show()
         return self.app.exec_()
 
     def settings_changed(self, settings_new_state):
@@ -65,15 +65,13 @@ class Controller:
             self.settings.setValue(k, v)
 
     def get_imagepath(self):
-        return self.image_viewer.image_helper.get_filepath()
+        return self.main_window.image_helper.get_filepath()
 
     def calculate_descriptors(self):
         imagepath = self.get_imagepath()
         descriptor_base = self.model.calculate_descriptors(self.get_chosen_descriptor_idx(),
                                                            self.get_descriptor_params(),
                                                            imagepath, DESCRIPTOR_DIRECTORY_PATH)
-        self.descriptor_database = descriptor_base
-        self.model.init_search_service(descriptor_base)
 
     def get_descriptors(self):
         return self.model.descriptors
@@ -90,8 +88,8 @@ class Controller:
                                         self.get_chosen_similarity_idx(), self.get_similarity_params())
 
         qts = list(map(lambda tup:
-                       self.image_viewer.image_helper.get_qt_from_coordinates(tup), top_n))
-        self.image_viewer.show_top_n(qts)
+                       self.main_window.image_helper.get_qt_from_coordinates(tup), top_n))
+        self.main_window.show_top_n(qts)
 
     @staticmethod
     def _select_last_modified_file_in_folder():
@@ -119,8 +117,8 @@ class Controller:
     def open_filepath(self, filepath):
         if not filepath:
             return
-        self.image_viewer.image_helper = ImageHelper(filepath)
-        self.image_viewer.fullslide_viewer.set_image(self.image_viewer.image_helper)
+        self.main_window.image_helper = ImageHelper(filepath)
+        self.main_window.fullslide_viewer.set_image(self.image_viewer.image_helper)
         self.set_desc_path(filepath)
 
         self.settings.setValue(LAST_IMAGE, filepath)
