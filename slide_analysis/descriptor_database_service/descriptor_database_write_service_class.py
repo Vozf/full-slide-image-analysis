@@ -39,9 +39,11 @@ class DescriptorDatabaseWriteService:
                                                split.tile_height, split.step,
                                                split.width, split.height)
 
+        descr_array = descr.get_descriptor_array(tile_stream)
+
         with open(descr_filename, 'wb') as file:
             self._dump_obj(file, info_obj)
-            self._dump_obj(file, descr.get_descriptor_array(tile_stream))
+            self._dump_obj(file, descr_array)
 
         return descr_filename
 
